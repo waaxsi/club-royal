@@ -1,0 +1,640 @@
+
+> club-royal@2.0.0 test
+> node scripts/test.mjs
+
+TAP version 13
+# Subtest: Victoire ordinaire : 1000 → 1100
+ok 1 - Victoire ordinaire : 1000 → 1100
+  ---
+  duration_ms: 2.917204
+  type: 'test'
+  ...
+# Subtest: Blackjack naturel : 1000 → 1150
+ok 2 - Blackjack naturel : 1000 → 1150
+  ---
+  duration_ms: 0.416118
+  type: 'test'
+  ...
+# Subtest: Égalité : 1000 → 1000
+ok 3 - Égalité : 1000 → 1000
+  ---
+  duration_ms: 0.289918
+  type: 'test'
+  ...
+# Subtest: Défaite : 1000 → 900
+ok 4 - Défaite : 1000 → 900
+  ---
+  duration_ms: 0.374525
+  type: 'test'
+  ...
+# Subtest: Deux blackjacks : égalité immédiate
+ok 5 - Deux blackjacks : égalité immédiate
+  ---
+  duration_ms: 0.310819
+  type: 'test'
+  ...
+# Subtest: Le blackjack du croupier termine la main avant une action
+ok 6 - Le blackjack du croupier termine la main avant une action
+  ---
+  duration_ms: 0.480445
+  type: 'test'
+  ...
+# Subtest: Le croupier reste sur soft 17
+ok 7 - Le croupier reste sur soft 17
+  ---
+  duration_ms: 0.388737
+  type: 'test'
+  ...
+# Subtest: Le croupier tire sous 17 puis s’arrête
+ok 8 - Le croupier tire sous 17 puis s’arrête
+  ---
+  duration_ms: 0.399273
+  type: 'test'
+  ...
+# Subtest: Croupier dépasse : joueur non dépassé gagne
+ok 9 - Croupier dépasse : joueur non dépassé gagne
+  ---
+  duration_ms: 0.868141
+  type: 'test'
+  ...
+# Subtest: Un joueur dépassé perd même face à un croupier dépassé
+ok 10 - Un joueur dépassé perd même face à un croupier dépassé
+  ---
+  duration_ms: 0.710373
+  type: 'test'
+  ...
+# Subtest: Double : une seule carte et mise doublée exactement une fois
+ok 11 - Double : une seule carte et mise doublée exactement une fois
+  ---
+  duration_ms: 0.398221
+  type: 'test'
+  ...
+# Subtest: Double interdit après avoir tiré ou sans fonds suffisants
+ok 12 - Double interdit après avoir tiré ou sans fonds suffisants
+  ---
+  duration_ms: 0.272712
+  type: 'test'
+  ...
+# Subtest: Mises validées, pas de solde négatif ni double débit
+ok 13 - Mises validées, pas de solde négatif ni double débit
+  ---
+  duration_ms: 0.608959
+  type: 'test'
+  ...
+# Subtest: Aucun pari : retour au salon, pas de boucle de mains vides
+ok 14 - Aucun pari : retour au salon, pas de boucle de mains vides
+  ---
+  duration_ms: 1.473735
+  type: 'test'
+  ...
+# Subtest: Vue publique : carte et total cachés du croupier absents
+ok 15 - Vue publique : carte et total cachés du croupier absents
+  ---
+  duration_ms: 0.451322
+  type: 'test'
+  ...
+# Subtest: 800 mains aléatoires : gains cohérents et aucun solde négatif
+ok 16 - 800 mains aléatoires : gains cohérents et aucun solde négatif
+  ---
+  duration_ms: 58.104372
+  type: 'test'
+  ...
+# Subtest: 52 cartes distinctes, aucun joker
+ok 17 - 52 cartes distinctes, aucun joker
+  ---
+  duration_ms: 1.191268
+  type: 'test'
+  ...
+# Subtest: Sabot : 312 identifiants physiques distincts
+ok 18 - Sabot : 312 identifiants physiques distincts
+  ---
+  duration_ms: 0.96064
+  type: 'test'
+  ...
+# Subtest: Évaluation : Quinte flush royale (As Ks Qs Js Ts 2h 3d)
+ok 19 - Évaluation : Quinte flush royale (As Ks Qs Js Ts 2h 3d)
+  ---
+  duration_ms: 0.569991
+  type: 'test'
+  ...
+# Subtest: Évaluation : Quinte flush (9h 8h 7h 6h 5h As Ad)
+ok 20 - Évaluation : Quinte flush (9h 8h 7h 6h 5h As Ad)
+  ---
+  duration_ms: 0.253683
+  type: 'test'
+  ...
+# Subtest: Évaluation : Carré (Ah Ad Ac As Kh 2s 3s)
+ok 21 - Évaluation : Carré (Ah Ad Ac As Kh 2s 3s)
+  ---
+  duration_ms: 0.190238
+  type: 'test'
+  ...
+# Subtest: Évaluation : Full (Ah Ad Ac Ks Kh Kd 2s)
+ok 22 - Évaluation : Full (Ah Ad Ac Ks Kh Kd 2s)
+  ---
+  duration_ms: 0.138599
+  type: 'test'
+  ...
+# Subtest: Évaluation : Couleur (Ah Jh 9h 7h 3h 2s Kd)
+ok 23 - Évaluation : Couleur (Ah Jh 9h 7h 3h 2s Kd)
+  ---
+  duration_ms: 0.176766
+  type: 'test'
+  ...
+# Subtest: Évaluation : Quinte (Ah 2d 3c 4s 5d Kh Ks)
+ok 24 - Évaluation : Quinte (Ah 2d 3c 4s 5d Kh Ks)
+  ---
+  duration_ms: 0.643802
+  type: 'test'
+  ...
+# Subtest: Évaluation : Brelan (Ah Ad Ac Ks Qh 2s 3s)
+ok 25 - Évaluation : Brelan (Ah Ad Ac Ks Qh 2s 3s)
+  ---
+  duration_ms: 0.290018
+  type: 'test'
+  ...
+# Subtest: Évaluation : Double paire (Ah Ad Ks Kd Qh Qs 3s)
+ok 26 - Évaluation : Double paire (Ah Ad Ks Kd Qh Qs 3s)
+  ---
+  duration_ms: 0.361376
+  type: 'test'
+  ...
+# Subtest: Évaluation : Paire (Kh Kd As Jh 9d 6s 2c)
+ok 27 - Évaluation : Paire (Kh Kd As Jh 9d 6s 2c)
+  ---
+  duration_ms: 0.170758
+  type: 'test'
+  ...
+# Subtest: Évaluation : Carte haute (Ah Kd 9s 7h 5d 3c 2s)
+ok 28 - Évaluation : Carte haute (Ah Kd 9s 7h 5d 3c 2s)
+  ---
+  duration_ms: 0.111739
+  type: 'test'
+  ...
+# Subtest: Départage par kickers
+ok 29 - Départage par kickers
+  ---
+  duration_ms: 0.134423
+  type: 'test'
+  ...
+# Subtest: Une quinte 6 haute bat la roue A–5
+ok 30 - Une quinte 6 haute bat la roue A–5
+  ---
+  duration_ms: 0.072389
+  type: 'test'
+  ...
+# Subtest: La meilleure main peut être les cinq cartes communes
+ok 31 - La meilleure main peut être les cinq cartes communes
+  ---
+  duration_ms: 0.158419
+  type: 'test'
+  ...
+# Subtest: Couleur départagée sur la cinquième carte
+ok 32 - Couleur départagée sur la cinquième carte
+  ---
+  duration_ms: 0.116636
+  type: 'test'
+  ...
+# Subtest: Plusieurs As au blackjack
+ok 33 - Plusieurs As au blackjack
+  ---
+  duration_ms: 0.790904
+  type: 'test'
+  ...
+# Subtest: Blackjack naturel et dépassement
+ok 34 - Blackjack naturel et dépassement
+  ---
+  duration_ms: 0.122936
+  type: 'test'
+  ...
+# Subtest: L’évaluateur refuse les tailles invalides
+ok 35 - L’évaluateur refuse les tailles invalides
+  ---
+  duration_ms: 0.204759
+  type: 'test'
+  ...
+# Subtest: Roulette : 37 cases uniques, 18 rouges, 18 noires et un zéro
+ok 36 - Roulette : 37 cases uniques, 18 rouges, 18 noires et un zéro
+  ---
+  duration_ms: 1.25244
+  type: 'test'
+  ...
+# Subtest: Roulette : paiements de toutes les positions sur les 37 issues
+ok 37 - Roulette : paiements de toutes les positions sur les 37 issues
+  ---
+  duration_ms: 1.232701
+  type: 'test'
+  ...
+# Subtest: Roulette : montants invalides, doublons, limites et groupes refusés
+ok 38 - Roulette : montants invalides, doublons, limites et groupes refusés
+  ---
+  duration_ms: 0.482719
+  type: 'test'
+  ...
+# Subtest: Roulette : règlement idempotent, mise incluse et historique du vrai numéro
+ok 39 - Roulette : règlement idempotent, mise incluse et historique du vrai numéro
+  ---
+  duration_ms: 0.235816
+  type: 'test'
+  ...
+# Subtest: Cristaux : disposition valide, immuable et cachée tant que le tour est actif
+ok 40 - Cristaux : disposition valide, immuable et cachée tant que le tour est actif
+  ---
+  duration_ms: 0.816963
+  type: 'test'
+  ...
+# Subtest: Cristaux : une mine perd, fin de jeu immuable et révélation finale autorisée
+ok 41 - Cristaux : une mine perd, fin de jeu immuable et révélation finale autorisée
+  ---
+  duration_ms: 0.211899
+  type: 'test'
+  ...
+# Subtest: Cristaux : cashout et complétion utilisent les probabilités combinatoires exactes
+ok 42 - Cristaux : cashout et complétion utilisent les probabilités combinatoires exactes
+  ---
+  duration_ms: 0.506114
+  type: 'test'
+  ...
+# Subtest: Dice : seuil strict, 10 000 issues, probabilité choisie et paiements exacts
+ok 43 - Dice : seuil strict, 10 000 issues, probabilité choisie et paiements exacts
+  ---
+  duration_ms: 11.856968
+  type: 'test'
+  ...
+# Subtest: Plinko : les 4 096 chemins correspondent à leur case et au paiement affiché
+ok 44 - Plinko : les 4 096 chemins correspondent à leur case et au paiement affiché
+  ---
+  duration_ms: 10.91058
+  type: 'test'
+  ...
+# Subtest: Poker Boost : force des mains, sélection de 24 distributions et aucune carte dupliquée
+ok 45 - Poker Boost : force des mains, sélection de 24 distributions et aucune carte dupliquée
+  ---
+  duration_ms: 4.317388
+  type: 'test'
+  ...
+# Subtest: Poker Boost : la sélection dépend des seules cartes privées initiales, pas du tableau futur
+ok 46 - Poker Boost : la sélection dépend des seules cartes privées initiales, pas du tableau futur
+  ---
+  duration_ms: 0.254915
+  type: 'test'
+  ...
+# (node:3601) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: V2 HTTP : vrais fichiers, politique de sécurité et routes privées non exposées
+ok 47 - V2 HTTP : vrais fichiers, politique de sécurité et routes privées non exposées
+  ---
+  duration_ms: 67.924209
+  type: 'test'
+  ...
+# Subtest: V2 compte : inscription, cookie HttpOnly, hash scrypt uniquement et session persistante
+ok 48 - V2 compte : inscription, cookie HttpOnly, hash scrypt uniquement et session persistante
+  ---
+  duration_ms: 110.263743
+  type: 'test'
+  ...
+# Subtest: V2 compte : identifiants, mot de passe, doublon et usurpation de rôle rejetés
+ok 49 - V2 compte : identifiants, mot de passe, doublon et usurpation de rôle rejetés
+  ---
+  duration_ms: 356.363952
+  type: 'test'
+  ...
+# Subtest: V2 sécurité : origine, JSON, CSRF, session et méthodes contrôlés
+ok 50 - V2 sécurité : origine, JSON, CSRF, session et méthodes contrôlés
+  ---
+  duration_ms: 101.317223
+  type: 'test'
+  ...
+# Subtest: V2 SSE : deux vrais clients, confidentialité et main complète avec tableau commun
+ok 51 - V2 SSE : deux vrais clients, confidentialité et main complète avec tableau commun
+  ---
+  duration_ms: 279.789134
+  type: 'test'
+  ...
+# Subtest: V2 poker : accord explicite pour les mains favorisées et table isolée
+ok 52 - V2 poker : accord explicite pour les mains favorisées et table isolée
+  ---
+  duration_ms: 254.800641
+  type: 'test'
+  ...
+# Subtest: V2 idempotence : deux clics identiques ne débitent qu’une fois ; conflit rejeté
+ok 53 - V2 idempotence : deux clics identiques ne débitent qu’une fois ; conflit rejeté
+  ---
+  duration_ms: 85.909087
+  type: 'test'
+  ...
+# Subtest: V2 roulette : même numéro, numéro caché pendant la rotation et paiements exacts
+ok 54 - V2 roulette : même numéro, numéro caché pendant la rotation et paiements exacts
+  ---
+  duration_ms: 548.200798
+  type: 'test'
+  ...
+# Subtest: V2 blackjack : naturel ou tours, carte du croupier masquée et 3:2 inchangé
+ok 55 - V2 blackjack : naturel ou tours, carte du croupier masquée et 3:2 inchangé
+  ---
+  duration_ms: 92.612028
+  type: 'test'
+  ...
+# Subtest: V2 connexion : reconnexion au même siège et sessions révoquées par déconnexion
+ok 56 - V2 connexion : reconnexion au même siège et sessions révoquées par déconnexion
+  ---
+  duration_ms: 127.42345
+  type: 'test'
+  ...
+# Subtest: V2 admin : crédit audité visible en SSE, suspension et aucune carte privée
+ok 57 - V2 admin : crédit audité visible en SSE, suspension et aucune carte privée
+  ---
+  duration_ms: 188.515682
+  type: 'test'
+  ...
+# Subtest: V2 admin : reset temporaire, changement exigé, puis nouveau mot de passe effectif
+ok 58 - V2 admin : reset temporaire, changement exigé, puis nouveau mot de passe effectif
+  ---
+  duration_ms: 613.959321
+  type: 'test'
+  ...
+# Subtest: V2 admin : maintenance bloque les nouvelles mises, sans exposer de secrets dans l’export
+ok 59 - V2 admin : maintenance bloque les nouvelles mises, sans exposer de secrets dans l’export
+  ---
+  duration_ms: 172.450368
+  type: 'test'
+  ...
+# Subtest: V2 capacités : table pleine, solo non rejoignable, arrivée en cours attend
+ok 60 - V2 capacités : table pleine, solo non rejoignable, arrivée en cours attend
+  ---
+  duration_ms: 185.338118
+  type: 'test'
+  ...
+# Subtest: Duel : bouton = petite blinde, agit en premier préflop
+ok 61 - Duel : bouton = petite blinde, agit en premier préflop
+  ---
+  duration_ms: 5.195894
+  type: 'test'
+  ...
+# Subtest: À trois : grosse blinde garde son option
+ok 62 - À trois : grosse blinde garde son option
+  ---
+  duration_ms: 0.535929
+  type: 'test'
+  ...
+# Subtest: Coucher collectif : attribution unique et cartes cachées
+ok 63 - Coucher collectif : attribution unique et cartes cachées
+  ---
+  duration_ms: 1.096595
+  type: 'test'
+  ...
+# Subtest: Une main complète a cinq communes et conserve les jetons
+ok 64 - Une main complète a cinq communes et conserve les jetons
+  ---
+  duration_ms: 1.865216
+  type: 'test'
+  ...
+# Subtest: Rotation du bouton entre les mains
+ok 65 - Rotation du bouton entre les mains
+  ---
+  duration_ms: 1.200943
+  type: 'test'
+  ...
+# Subtest: Relance minimum et interdiction de parole face à une mise
+ok 66 - Relance minimum et interdiction de parole face à une mise
+  ---
+  duration_ms: 0.45684
+  type: 'test'
+  ...
+# Subtest: Action hors tour refusée sans débiter
+ok 67 - Action hors tour refusée sans débiter
+  ---
+  duration_ms: 0.346824
+  type: 'test'
+  ...
+# Subtest: Tapis court ne rouvre pas une relance déjà jouée
+ok 68 - Tapis court ne rouvre pas une relance déjà jouée
+  ---
+  duration_ms: 0.303058
+  type: 'test'
+  ...
+# Subtest: Plusieurs tapis courts peuvent rouvrir cumulativement
+ok 69 - Plusieurs tapis courts peuvent rouvrir cumulativement
+  ---
+  duration_ms: 0.644944
+  type: 'test'
+  ...
+# Subtest: Tous à tapis : aucune boucle de tours et runout complet
+ok 70 - Tous à tapis : aucune boucle de tours et runout complet
+  ---
+  duration_ms: 0.731634
+  type: 'test'
+  ...
+# Subtest: Pas de relance dans un pot secondaire vide
+ok 71 - Pas de relance dans un pot secondaire vide
+  ---
+  duration_ms: 0.571943
+  type: 'test'
+  ...
+# Subtest: Trois tapis inégaux : pot principal, secondaire et remboursement
+ok 72 - Trois tapis inégaux : pot principal, secondaire et remboursement
+  ---
+  duration_ms: 1.057136
+  type: 'test'
+  ...
+# Subtest: Égalité avec jeton impair : priorité à gauche du bouton
+ok 73 - Égalité avec jeton impair : priorité à gauche du bouton
+  ---
+  duration_ms: 0.430109
+  type: 'test'
+  ...
+# Subtest: Robots : comportement indépendant des cartes privées adverses
+ok 74 - Robots : comportement indépendant des cartes privées adverses
+  ---
+  duration_ms: 0.279963
+  type: 'test'
+  ...
+# Subtest: Simulation de 600 mains : conservation, terminaisons et pots
+ok 75 - Simulation de 600 mains : conservation, terminaisons et pots
+  ---
+  duration_ms: 165.160086
+  type: 'test'
+  ...
+# Subtest: Transition à deux joueurs : pas deux grosses blindes consécutives
+ok 76 - Transition à deux joueurs : pas deux grosses blindes consécutives
+  ---
+  duration_ms: 0.812827
+  type: 'test'
+  ...
+# Subtest: Recharge humaine gratuite : seulement à court de jetons et hors main
+ok 77 - Recharge humaine gratuite : seulement à court de jetons et hors main
+  ---
+  duration_ms: 2.950704
+  type: 'test'
+  ...
+# Subtest: Robots gérés par l’hôte uniquement entre les mains
+ok 78 - Robots gérés par l’hôte uniquement entre les mains
+  ---
+  duration_ms: 1.731804
+  type: 'test'
+  ...
+# Subtest: Identité avec pseudo malicieux ne modifie pas les rôles
+ok 79 - Identité avec pseudo malicieux ne modifie pas les rôles
+  ---
+  duration_ms: 0.272441
+  type: 'test'
+  ...
+# Subtest: Expiration après la grâce : jeton invalidé sans supprimer une mise en cours
+ok 80 - Expiration après la grâce : jeton invalidé sans supprimer une mise en cours
+  ---
+  duration_ms: 0.891897
+  type: 'test'
+  ...
+# Subtest: Salle vide expirée : nettoyage de la salle et des identifiants
+ok 81 - Salle vide expirée : nettoyage de la salle et des identifiants
+  ---
+  duration_ms: 0.451091
+  type: 'test'
+  ...
+# (node:3634) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: Bootstrap : génération du propriétaire dans un fichier extérieur sans secret dans la sortie
+ok 82 - Bootstrap : génération du propriétaire dans un fichier extérieur sans secret dans la sortie
+  ---
+  duration_ms: 363.450472
+  type: 'test'
+  ...
+# Subtest: Bootstrap : refus du fichier de credentials dans le projet et de la saisie non interactive
+ok 83 - Bootstrap : refus du fichier de credentials dans le projet et de la saisie non interactive
+  ---
+  duration_ms: 81.33545
+  type: 'test'
+  ...
+# Subtest: Production : refus du stockage éphémère et de PUBLIC_BASE_URL sans HTTPS
+ok 84 - Production : refus du stockage éphémère et de PUBLIC_BASE_URL sans HTTPS
+  ---
+  duration_ms: 147.91667
+  type: 'test'
+  ...
+# Subtest: Production : aucune inscription possible sans compte propriétaire configuré
+ok 85 - Production : aucune inscription possible sans compte propriétaire configuré
+  ---
+  duration_ms: 61.821734
+  type: 'test'
+  ...
+# Subtest: Production : cookie Secure, adresses LAN masquées et origine erronée refusée
+ok 86 - Production : cookie Secure, adresses LAN masquées et origine erronée refusée
+  ---
+  duration_ms: 127.524633
+  type: 'test'
+  ...
+# (node:3645) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: Stockage local : sauvegarde, réouverture et verrou de remplacement d’instance
+ok 87 - Stockage local : sauvegarde, réouverture et verrou de remplacement d’instance
+  ---
+  duration_ms: 5.356506
+  type: 'test'
+  ...
+# Subtest: Stockage distant : protocole HTTP, paramètres typés, SQL CAS et contenu persistant
+ok 88 - Stockage distant : protocole HTTP, paramètres typés, SQL CAS et contenu persistant
+  ---
+  duration_ms: 51.02208
+  type: 'test'
+  ...
+# Subtest: Stockage distant : réponse perdue après COMMIT détectée, aucun second débit
+ok 89 - Stockage distant : réponse perdue après COMMIT détectée, aucun second débit
+  ---
+  duration_ms: 17.593015
+  type: 'test'
+  ...
+# Subtest: Stockage distant : panne ambiguë stoppe toute écriture, plutôt que réessayer en aveugle
+ok 90 - Stockage distant : panne ambiguë stoppe toute écriture, plutôt que réessayer en aveugle
+  ---
+  duration_ms: 9.206522
+  type: 'test'
+  ...
+# Subtest: Stockage : HTTPS, jeton requis, schéma incompatible et capacité protégés
+ok 91 - Stockage : HTTPS, jeton requis, schéma incompatible et capacité protégés
+  ---
+  duration_ms: 159.004509
+  type: 'test'
+  ...
+# Subtest: Administration : aucun joueur préexistant ne peut devenir le propriétaire par collision de pseudo
+ok 92 - Administration : aucun joueur préexistant ne peut devenir le propriétaire par collision de pseudo
+  ---
+  duration_ms: 7.931296
+  type: 'test'
+  ...
+# (node:3700) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: Portefeuille : tapis commun, topup et sortie restituent exactement les mêmes euros
+ok 93 - Portefeuille : tapis commun, topup et sortie restituent exactement les mêmes euros
+  ---
+  duration_ms: 7.057938
+  type: 'test'
+  ...
+# Subtest: Portefeuille : soldes serveur, doubles tables, fonds insuffisants et décimales invalides
+ok 94 - Portefeuille : soldes serveur, doubles tables, fonds insuffisants et décimales invalides
+  ---
+  duration_ms: 2.597893
+  type: 'test'
+  ...
+# Subtest: Portefeuille : les gains des mini-jeux se retrouvent directement au même endroit
+ok 95 - Portefeuille : les gains des mini-jeux se retrouvent directement au même endroit
+  ---
+  duration_ms: 1.677614
+  type: 'test'
+  ...
+# Subtest: Portefeuille : une commande admin ne modifie pas les fonds déjà engagés
+ok 96 - Portefeuille : une commande admin ne modifie pas les fonds déjà engagés
+  ---
+  duration_ms: 2.043385
+  type: 'test'
+  ...
+# Subtest: Portefeuille : quitter pendant une main ne permet pas de fuir une mise
+ok 97 - Portefeuille : quitter pendant une main ne permet pas de fuir une mise
+  ---
+  duration_ms: 16.61479
+  type: 'test'
+  ...
+# Subtest: Portefeuille : annulation admin rembourse le tapis de référence avant la main
+ok 98 - Portefeuille : annulation admin rembourse le tapis de référence avant la main
+  ---
+  duration_ms: 3.113792
+  type: 'test'
+  ...
+# Subtest: Cristaux : stake réservé, cashout unique, anciennes requêtes et reprise inchangée
+ok 99 - Cristaux : stake réservé, cashout unique, anciennes requêtes et reprise inchangée
+  ---
+  duration_ms: 2.093321
+  type: 'test'
+  ...
+# Subtest: Portefeuille : stockage indisponible annule le débit ET la création de table
+ok 100 - Portefeuille : stockage indisponible annule le débit ET la création de table
+  ---
+  duration_ms: 1.09959
+  type: 'test'
+  ...
+# Subtest: Portefeuille : doublon durable après redémarrage, restitution des tables, Cristaux persistant
+ok 101 - Portefeuille : doublon durable après redémarrage, restitution des tables, Cristaux persistant
+  ---
+  duration_ms: 6.100622
+  type: 'test'
+  ...
+# Subtest: Portefeuille : secours plafonné, raison admin obligatoire et suspension du propriétaire refusée
+ok 102 - Portefeuille : secours plafonné, raison admin obligatoire et suspension du propriétaire refusée
+  ---
+  duration_ms: 1.851837
+  type: 'test'
+  ...
+# Subtest: Administration : premier visiteur jamais administrateur et bootstrap refusant une usurpation existante
+ok 103 - Administration : premier visiteur jamais administrateur et bootstrap refusant une usurpation existante
+  ---
+  duration_ms: 0.574317
+  type: 'test'
+  ...
+1..103
+# tests 103
+# suites 0
+# pass 103
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 3441.140914

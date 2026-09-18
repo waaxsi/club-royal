@@ -1,161 +1,69 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { createApp } from '../server/index.js';
-import { randomUUID } from 'node:crypto';
+import {harness,PASSWORD,actionId,pause} from './v2-helpers.js';
 
-async function harness(t, options = {}) {
-  const app = createApp({ tickMs: 10, ...options });
-  await new Promise(resolve => app.server.listen(0, '127.0.0.1', resolve));
-  const base = `http://127.0.0.1:${app.server.address().port}`;
-  t.after(() => app.stop());
-  async function api(route, data, token, headers = {}) {
-    const res = await fetch(`${base}/api/${route}`, {
-      method: data === undefined ? 'GET' : 'POST',
-      headers: { ...(data === undefined ? {} : { 'Content-Type': 'application/json' }), ...(token ? { Authorization: `Bearer ${token}` } : {}), ...headers },
-      body: data === undefined ? undefined : JSON.stringify(data)
-    });
-    return { status: res.status, data: await res.json() };
-  }
-  async function create(game = 'poker') { return (await api('create', { name: 'Alice', game })).data; }
-  async function join(code, name = 'Bob') { return (await api('join', { name, code })).data; }
-  async function action(who, type, extra = {}) {
-    const s = (await api('state', undefined, who.token)).data;
-    return api('action', { type, actionId: randomUUID(), handId: s.handId, turnSeq: s.turnSeq, ...extra }, who.token);
-  }
-  async function stream(token) {
-    const control = new AbortController(); t.after(() => control.abort());
-    const res = await fetch(`${base}/api/events`, { headers: { Authorization: `Bearer ${token}` }, signal: control.signal });
-    assert.equal(res.status, 200); assert.match(res.headers.get('content-type'), /text\/event-stream/);
-    const events = []; let buffer = ''; const decoder = new TextDecoder();
-    (async () => { try {
-      for await (const chunk of res.body) {
-        buffer += decoder.decode(chunk, { stream: true }); let end;
-        while ((end = buffer.indexOf('\n\n')) >= 0) {
-          const packet = buffer.slice(0, end); buffer = buffer.slice(end + 2);
-          if (packet.startsWith('event: state')) events.push(JSON.parse(packet.match(/^data: (.+)$/m)[1]));
-        }
-      }
-    } catch { /* Test cleanup aborts open streams. */ } })();
-    return {
-      events, close: () => control.abort(),
-      async wait(predicate) {
-        const until = Date.now() + 3000;
-        while (Date.now() < until) { const event = events.findLast(predicate); if (event) return event; await new Promise(r => setTimeout(r, 10)); }
-        throw new Error('Événement SSE attendu non reçu');
-      }
-    };
-  }
-  return { app, base, api, create, join, action, stream };
-}
-
-test('HTTP : accueil, ressources locales et protections', async t => {
-  const { base } = await harness(t);
-  for (const route of ['/', '/app.js', '/styles.css', '/favicon.svg']) {
-    const response = await fetch(base + route); assert.equal(response.status, 200); assert.equal(response.headers.get('x-content-type-options'), 'nosniff'); assert.ok((await response.text()).length > 20);
-  }
-  assert.equal((await fetch(base + '/server/index.js')).status, 404);
-  assert.equal((await fetch(base + '/.env')).status, 404);
+test('V2 HTTP : vrais fichiers, politique de sécurité et routes privées non exposées',async t=>{
+  const {base}=await harness(t);for(const name of ['/','/app.js','/styles.css','/cards-ui.js','/art.js','/effects.js','/favicon.svg']){const res=await fetch(base+name);assert.equal(res.status,200);assert.equal(res.headers.get('x-content-type-options'),'nosniff');assert.ok((await res.text()).length>20);}
+  for(const name of ['/server/index.js','/.env','/data/club-royal.sqlite'])assert.equal((await fetch(base+name)).status,404);
 });
-test('Deux clients SSE jouent réellement une main complète et voient le même tableau', async t => {
-  const { create, join, api, action, stream } = await harness(t);
-  const a = await create(), b = await join(a.code.toLowerCase());
-  const sa = await stream(a.token), sb = await stream(b.token);
-  await action(a, 'start');
-  const va = await sa.wait(s => s.phase === 'preflop'), vb = await sb.wait(s => s.phase === 'preflop');
-  assert.equal(va.players.length, 2); assert.deepEqual(va.players.find(p => p.id === b.id).cards, [null, null]);
-  assert.deepEqual(vb.players.find(p => p.id === a.id).cards, [null, null]);
-  const secret = va.players.find(p => p.id === a.id).cards[0].id; assert.ok(!JSON.stringify(vb).includes(secret));
-  assert.ok(!JSON.stringify(va).includes(a.token)); assert.ok(!JSON.stringify(vb).includes(b.token));
-  let steps = 0;
-  while (true) {
-    const snapshot = (await api('state', undefined, a.token)).data;
-    if (snapshot.phase === 'results') break;
-    assert.ok(++steps < 50);
-    const who = snapshot.turn === a.id ? a : b;
-    const own = (await api('state', undefined, who.token)).data;
-    assert.equal((await action(who, own.legal.check ? 'check' : 'call')).status, 200);
-  }
-  const ra = await sa.wait(s => s.phase === 'results'), rb = await sb.wait(s => s.phase === 'results');
-  assert.deepEqual(ra.board, rb.board); assert.deepEqual(ra.results, rb.results); assert.equal(ra.board.length, 5);
-  assert.equal(ra.players.reduce((n, p) => n + p.stack, 0), 4000);
+test('V2 compte : inscription, cookie HttpOnly, hash scrypt uniquement et session persistante',async t=>{
+  const {client,app}=await harness(t),c=client();const out=await c.req('/api/auth/register',{username:'alice-auth',name:'Alice',password:PASSWORD});assert.equal(out.status,200);assert.match(out.headers.get('set-cookie'),/HttpOnly; SameSite=Strict/);assert.equal(out.data.me.wallet.available,100000);assert.ok(!JSON.stringify(out.data).includes(PASSWORD));assert.ok(!JSON.stringify(out.data).includes('scrypt$'));
+  const user=app.hub.byUsername('alice-auth');assert.match(user.hash,/^scrypt\$/);assert.ok(!Object.keys(app.hub.data.sessions).includes(c.cookie.slice(11)));assert.equal((await c.get('/api/me')).data.id,user.id);
 });
-test('Salons isolés : une autre table ne reçoit ni joueurs ni mises', async t => {
-  const { create, join, api, action } = await harness(t);
-  const a = await create(); await join(a.code); const other = await create();
-  const before = (await api('state', undefined, other.token)).data;
-  await action(a, 'start');
-  const after = (await api('state', undefined, other.token)).data;
-  assert.equal(after.version, before.version); assert.equal(after.players.length, 1); assert.equal(after.phase, 'lobby'); assert.notEqual(a.code, other.code);
+test('V2 compte : identifiants, mot de passe, doublon et usurpation de rôle rejetés',async t=>{
+  const{client}=await harness(t),a=client();assert.equal((await a.req('/api/auth/register',{username:'x',name:'Test',password:PASSWORD})).status,400);assert.equal((await a.req('/api/auth/register',{username:'alice-short',name:'Alice',password:'short'})).status,400);
+  await a.register('alice-roles');const another=client();assert.equal((await another.req('/api/auth/register',{username:'alice-roles',name:'Bob',password:PASSWORD})).status,409);
+  const b=client();const out=await b.req('/api/auth/register',{username:'forged-role',name:'Pretend',password:PASSWORD,role:'admin',balance:999999});assert.equal(out.data.me.role,'player');assert.equal(out.data.me.wallet.available,100000);assert.equal((await b.get('/api/admin')).status,403);assert.equal((await b.post('/api/admin/action',{type:'balance',userId:a.me.id,mode:'add',amount:1000,reason:'forged'})).status,403);
+  assert.equal((await another.req('/api/auth/login',{username:'alice-roles',password:'WrongPasswordHere'})).status,401);
 });
-test('Requête dupliquée : une seule mise, même réponse', async t => {
-  const { create, join, api, action } = await harness(t);
-  const a = await create('blackjack'); await join(a.code); await action(a, 'start');
-  const s = (await api('state', undefined, a.token)).data;
-  const msg = { type: 'bet', amount: 100, actionId: randomUUID(), handId: s.handId, turnSeq: s.turnSeq };
-  const first = await api('action', msg, a.token), second = await api('action', msg, a.token);
-  assert.equal(first.status, 200); assert.deepEqual(first, second);
-  assert.equal((await api('state', undefined, a.token)).data.players.find(p => p.id === a.id).stack, 900);
+test('V2 sécurité : origine, JSON, CSRF, session et méthodes contrôlés',async t=>{
+  const{base,client}=await harness(t),a=await client().register('alice-csrf');assert.equal((await client().post('/api/create',{game:'poker'})).status,401);
+  const msg={game:'poker',actionId:actionId()};assert.equal((await a.req('/api/create',msg,{headers:{Origin:'https://attacker.invalid'}})).status,403);assert.equal((await a.req('/api/create',msg,{headers:{'X-CSRF-Token':'invalid'}})).status,403);assert.equal((await a.req('/api/create',msg,{headers:{'X-CR-Request':'0'}})).status,403);assert.equal((await a.req('/api/create',msg,{headers:{'Sec-Fetch-Site':'cross-site'}})).status,403);
+  assert.equal((await fetch(base+'/api/create',{method:'POST',headers:{'Content-Type':'text/plain'},body:'{}'})).status,415);
 });
-test('Authentification, actions hors tour et ancienne main refusées', async t => {
-  const { create, join, api, action } = await harness(t);
-  const a = await create(), b = await join(a.code);
-  assert.equal((await api('state', undefined, 'invalid')).status, 401);
-  assert.equal((await action(b, 'start')).status, 400);
-  await action(a, 'start');
-  assert.equal((await action(b, 'call')).status, 400);
-  assert.equal((await api('action', { type: 'call', handId: 0, turnSeq: 0, actionId: randomUUID() }, a.token)).status, 400);
-  assert.equal((await api('action', { type: 'call', handId: 1, turnSeq: -1, actionId: randomUUID() }, a.token)).status, 400);
+test('V2 SSE : deux vrais clients, confidentialité et main complète avec tableau commun',async t=>{
+  const{client}=await harness(t),a=await client().register('alice-sse'),b=await client().register('bob-sse');
+  const created=await a.post('/api/create',{game:'poker',pokerMode:'classic',buyIn:20000});assert.equal(created.status,200);
+  assert.equal((await b.post('/api/join',{code:created.data.code.toLowerCase(),buyIn:20000})).status,200);const sa=await a.stream(),sb=await b.stream();
+  assert.match(sa.headers.get('content-type'),/event-stream/);assert.match(sa.headers.get('cache-control'),/no-transform/);assert.equal(sa.headers.get('x-accel-buffering'),'no');
+  assert.equal((await a.action('start')).status,200);const av=await sa.wait('state',s=>s?.phase==='preflop'),bv=await sb.wait('state',s=>s?.phase==='preflop');
+  const aid=av.you,bid=bv.you;assert.deepEqual(av.players.find(p=>p.id===bid).cards,[null,null]);assert.deepEqual(bv.players.find(p=>p.id===aid).cards,[null,null]);assert.ok(!('deck' in av));assert.ok(!JSON.stringify(bv).includes(av.players.find(p=>p.id===aid).cards[0].id));assert.ok(!JSON.stringify(av).includes('token'));
+  for(let i=0;i<30;i++){const s=await a.state();if(s.phase==='results')break;const c=s.turn===aid?a:b;const own=await c.state();const out=await c.action(own.legal.check?'check':'call');assert.equal(out.status,200,JSON.stringify(out.data));}
+  const end=await a.state();assert.equal(end.phase,'results');assert.equal(end.board.length,5);const be=await sb.wait('state',s=>s?.phase==='results');assert.deepEqual(end.board,be.board);assert.equal(end.players.reduce((n,p)=>n+p.stack,0),40000);
+  assert.equal((await a.post('/api/leave')).status,200);assert.equal((await b.post('/api/leave')).status,200);const am=(await a.get('/api/me')).data,bm=(await b.get('/api/me')).data;assert.equal(am.wallet.available+bm.wallet.available,200000);assert.equal(am.wallet.inPlay+bm.wallet.inPlay,0);
 });
-test('Reconnexion au même siège avec cartes et jetons conservés', async t => {
-  const { create, join, api, action, stream } = await harness(t);
-  const a = await create(), b = await join(a.code); let sa = await stream(a.token); await stream(b.token);
-  await action(a, 'start'); const before = (await api('state', undefined, a.token)).data;
-  sa.close(); await new Promise(r => setTimeout(r, 40)); sa = await stream(a.token);
-  const after = await sa.wait(s => s.phase === 'preflop');
-  assert.equal(after.players.length, 2); assert.deepEqual(after.players.find(p => p.id === a.id).cards, before.players.find(p => p.id === a.id).cards);
-  assert.equal(after.players.find(p => p.id === a.id).stack, before.players.find(p => p.id === a.id).stack);
+test('V2 poker : accord explicite pour les mains favorisées et table isolée',async t=>{
+  const{client}=await harness(t),a=await client().register('alice-boost'),b=await client().register('bob-boost'),c=await client().register('chloe-isolated');const room=await a.post('/api/create',{game:'poker',pokerMode:'boost'});assert.equal((await b.post('/api/join',{code:room.data.code})).status,400);assert.equal((await b.get('/api/me')).data.wallet.available,100000);
+  assert.equal((await b.post('/api/join',{code:room.data.code,acceptBoost:true})).status,200);const other=await c.post('/api/create',{game:'blackjack',solo:true});assert.notEqual(room.data.code,other.data.code);assert.equal((await a.state()).players.length,2);assert.equal((await c.state()).players.length,1);
 });
-test('Arrivée pendant une main : attente jusqu’à la suivante', async t => {
-  const { create, join, api, action } = await harness(t);
-  const a = await create(); await join(a.code); await action(a, 'start'); const c = await join(a.code, 'Chloe');
-  const s = (await api('state', undefined, c.token)).data; const p = s.players.find(p => p.id === c.id);
-  assert.equal(p.inHand, false); assert.deepEqual(p.cards, []); assert.equal(s.legal, null); assert.equal(p.stack, 2000);
+test('V2 idempotence : deux clics identiques ne débitent qu’une fois ; conflit rejeté',async t=>{
+  const{client}=await harness(t),a=await client().register('alice-duplicate');const msg={game:'dice',stake:1000,chance:50,actionId:actionId()};const[x,y]=await Promise.all([a.req('/api/instant',msg),a.req('/api/instant',msg)]);assert.equal(x.status,200);assert.equal(y.status,200);assert.equal(x.data.id,y.data.id);assert.equal(x.data.net,y.data.net);assert.equal((await a.get('/api/me')).data.wallet.available,100000+x.data.net);assert.equal((await a.req('/api/instant',{...msg,stake:2000})).status,409);
 });
-test('Table pleine et code invalide renvoient des erreurs lisibles', async t => {
-  const { create, join, api } = await harness(t); const a = await create();
-  for (let i = 0; i < 5; i++) await join(a.code, `Joueur ${i}`);
-  assert.equal((await api('join', { name: 'En trop', code: a.code })).status, 400);
-  assert.equal((await api('join', { name: 'Introuvable', code: 'ZZZZZZ' })).status, 404);
+test('V2 roulette : même numéro, numéro caché pendant la rotation et paiements exacts',async t=>{
+  const{client,app}=await harness(t,{spinMs:250}),a=await client().register('alice-wheel'),b=await client().register('bob-wheel');const room=await a.post('/api/create',{game:'roulette'});await b.post('/api/join',{code:room.data.code});await a.stream();await b.stream();await a.action('start');
+  assert.equal((await a.action('rouletteBet',{bets:[{type:'red',amount:1000}]})).status,200);assert.equal((await b.action('rouletteBet',{bets:[{type:'straight',selection:0,amount:1000}]})).status,200);const spin=await a.state();assert.equal(spin.phase,'spinning');assert.equal(spin.winningNumber,null);assert.ok(!JSON.stringify(spin).includes('deck'));
+  await pause(350);const end=await a.state(),second=await b.state();assert.equal(end.phase,'results');assert.equal(end.winningNumber,second.winningNumber);assert.ok(end.winningNumber>=0&&end.winningNumber<=36);assert.equal(end.results.length,2);assert.equal(Object.values(app.hub.data.escrows).length,2);
 });
-test('Déconnexion de l’hôte : transfert et tour expiré sans bloquer', async t => {
-  const { create, join, api, action, stream } = await harness(t, { turnMs: 100 });
-  const a = await create(), b = await join(a.code); const sa = await stream(a.token); await stream(b.token);
-  await action(a, 'start'); sa.close();
-  await new Promise(r => setTimeout(r, 180));
-  const s = (await api('state', undefined, b.token)).data;
-  assert.equal(s.ownerId, b.id); assert.equal(s.phase, 'results'); assert.equal(s.players.find(p => p.id === a.id).folded, true);
+test('V2 blackjack : naturel ou tours, carte du croupier masquée et 3:2 inchangé',async t=>{
+  const{client}=await harness(t),a=await client().register('alice-bj');await a.post('/api/create',{game:'blackjack',solo:true});const bet=await a.action('bet',{amount:1000});assert.equal(bet.status,200);let s=await a.state();if(s.phase==='playing'){assert.equal(s.dealerCards[1],null);assert.equal(s.dealerTotal,null);await a.action('stand');s=await a.state();}assert.equal(s.phase,'results');assert.ok(s.dealerCards.every(Boolean));assert.equal(s.players.length,1);
 });
-test('Blackjack multijoueur : délai des mises puis tour auto', async t => {
-  const { create, join, api, action, stream } = await harness(t, { betMs: 100, turnMs: 100 });
-  const a = await create('blackjack'); await join(a.code); await stream(a.token); await action(a, 'start'); await action(a, 'bet', { amount: 100 });
-  await new Promise(r => setTimeout(r, 320));
-  const s = (await api('state', undefined, a.token)).data;
-  assert.equal(s.phase, 'results'); assert.equal(s.players.filter(p => p.bjBet > 0).length, 1);
+test('V2 connexion : reconnexion au même siège et sessions révoquées par déconnexion',async t=>{
+  const{client}=await harness(t),a=await client().register('alice-reconnect');await a.post('/api/create',{game:'poker',solo:true,bots:1});const ss=await a.stream(),before=await a.state();ss.close();await pause(30);await a.stream();const after=await a.state();assert.equal(before.you,after.you);assert.deepEqual(before.players.find(p=>p.id===before.you).cards,after.players.find(p=>p.id===after.you).cards);const oldCookie=a.cookie;await a.post('/api/auth/logout');a.cookie=oldCookie;assert.equal((await a.get('/api/me')).status,401);
 });
-test('Origine externe et requêtes non JSON refusées', async t => {
-  const { base, api } = await harness(t);
-  assert.equal((await api('create', { name: 'Alice', game: 'poker' }, null, { Origin: 'https://untrusted.example' })).status, 403);
-  const response = await fetch(base + '/api/create', { method: 'POST', headers: { 'Content-Type': 'text/plain' }, body: '{}' });
-  assert.equal(response.status, 415);
+test('V2 admin : crédit audité visible en SSE, suspension et aucune carte privée',async t=>{
+  const{client}=await harness(t),admin=await client().login('owner-test'),a=await client().register('alice-admin');const stream=await a.stream();
+  assert.equal((await admin.post('/api/admin/action',{type:'balance',userId:a.me.id,mode:'add',amount:12345,reason:'Session de la classe'})).status,200);const changed=await stream.wait('account',s=>s.wallet.available===112345);assert.equal(changed.wallet.available,112345);
+  await a.post('/api/create',{game:'poker',solo:true,bots:1});const data=(await admin.get('/api/admin')).data;assert.equal(data.audit[0].action,'balance');assert.ok(!JSON.stringify(data).includes('scrypt$'));assert.ok(data.rooms.every(r=>!('cards' in r)&&r.players.every(p=>!('cards' in p))));
+  assert.equal((await admin.post('/api/admin/action',{type:'suspend',userId:a.me.id,disabled:true,reason:'Pause de test'})).status,200);await stream.wait('auth-expired');assert.equal((await a.get('/api/me')).status,401);
 });
-test('Quitter invalide la session, sans exposer d’informations privées', async t => {
-  const { create, api } = await harness(t); const a = await create();
-  assert.equal((await api('leave', {}, a.token)).status, 200);
-  assert.equal((await api('state', undefined, a.token)).status, 401);
+test('V2 admin : reset temporaire, changement exigé, puis nouveau mot de passe effectif',async t=>{
+  const{client}=await harness(t),admin=await client().login('owner-test'),a=await client().register('alice-reset');const temp='Temporary-For-Tests-1234',next='Changed-Password-For-Tests-1234';
+  assert.equal((await admin.post('/api/admin/action',{type:'resetPassword',userId:a.me.id,password:temp,reason:'Mot de passe oublié'})).status,200);assert.equal((await a.get('/api/me')).status,401);await a.login('alice-reset',temp);assert.equal(a.me.mustChangePassword,true);assert.equal((await a.post('/api/instant',{game:'dice',stake:1000,chance:50})).status,403);
+  assert.equal((await a.post('/api/profile',{currentPassword:temp,newPassword:next})).status,200);await a.login('alice-reset',next);assert.equal(a.me.mustChangePassword,false);assert.equal((await a.post('/api/instant',{game:'dice',stake:1000,chance:50})).status,200);
 });
-test('Table solo réellement peuplée de robots, pas rejoignable par code', async t => {
-  const { api } = await harness(t, { botMs: 10 });
-  const solo = (await api('create', { name: 'Alice', game: 'poker', solo: true, bots: 3 })).data;
-  assert.equal(solo.state.players.filter(p => p.bot).length, 3); assert.notEqual(solo.state.phase, 'lobby');
-  assert.equal((await api('join', { name: 'Bob', code: solo.code })).status, 400);
+test('V2 admin : maintenance bloque les nouvelles mises, sans exposer de secrets dans l’export',async t=>{
+  const{client}=await harness(t),admin=await client().login('owner-test'),a=await client().register('alice-maintenance');const x=await admin.post('/api/admin/action',{type:'settings',maintenance:true,banner:'Pause de la classe',reason:'Maintenance du club'});assert.equal(x.status,200);assert.equal((await a.post('/api/create',{game:'poker'})).status,503);assert.equal((await a.get('/api/me')).data.banner,'Pause de la classe');const exp=(await admin.get('/api/admin/export')).data;assert.ok(!JSON.stringify(exp).includes(PASSWORD));assert.ok(!JSON.stringify(exp).includes('scrypt$'));assert.ok(!Object.hasOwn(exp,'sessions'));
+});
+test('V2 capacités : table pleine, solo non rejoignable, arrivée en cours attend',async t=>{
+  const{client}=await harness(t),a=await client().register('alice-capacity'),b=await client().register('bob-capacity');const solo=await a.post('/api/create',{game:'poker',solo:true,bots:5});assert.equal((await b.post('/api/join',{code:solo.data.code,acceptBoost:true})).status,404);assert.equal((await a.state()).players.length,6);assert.equal((await a.action('addBot')).status,400);assert.equal((await b.post('/api/join',{code:'ZZZZZZ',acceptBoost:true})).status,404);
 });

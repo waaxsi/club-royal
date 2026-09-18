@@ -1,14 +1,29 @@
+# MODÈLE pour le service EXISTANT. Ne pas créer un doublon automatiquement.
+# Lire DEPLOIEMENT-GEMINI.md avant de l’appliquer. Aucun disque payant provisionné.
 services:
   - type: web
     name: club-royal-game
     runtime: node
     plan: free
     region: frankfurt
+    numInstances: 1
     buildCommand: npm run build
     startCommand: npm start
     healthCheckPath: /api/health
     envVars:
       - key: NODE_ENV
         value: production
+      - key: NODE_VERSION
+        value: "22"
       - key: PUBLIC_BASE_URL
         value: https://club-royal-game.onrender.com
+      - key: TURSO_DATABASE_URL
+        sync: false
+      - key: TURSO_AUTH_TOKEN
+        sync: false
+      - key: ADMIN_USER
+        sync: false
+      - key: ADMIN_PASSWORD_HASH
+        sync: false
+      - key: TRUST_PROXY_HOPS
+        value: "1"

@@ -1,37 +1,52 @@
-# Architecture — Club Royal 1.0
+# Architecture V2 — petit serveur de classe, un seul processus
 
-## Un serveur, plusieurs salons
+## Transport et responsabilités
 
-Le serveur écoute sur `0.0.0.0` et un seul port. Il sert l’interface et l’API depuis la même origine. Aucun fichier compilé ou stockage externe n’est nécessaire.
+Node natif sert `public/index.html`, les modules et styles autorisés, ainsi que `/api/*`. Le multijoueur utilise de vraies connexions **SSE** pour les états et du **HTTP JSON** pour les actions. Ce n’est pas une application Socket.IO/WebSocket ni React/Vite. Un même domaine HTTPS doit couvrir page, API et SSE ; les clients utilisent des chemins relatifs.
 
-`POST /api/create` crée un salon et une identité. `POST /api/join` crée une identité dans un salon existant. Ces routes renvoient un token secret, l’identifiant public du joueur et la première vue. Le navigateur conserve uniquement sa propre session.
+`server/index.js` : sessions HTTP, validation d’origine, protection CSRF, limitation des tentatives, routes, SSE et contrôles de déploiement. Un flux envoie uniquement la vue publique du compte concerné. Les cartes adverses et la carte cachée du croupier ne partent pas au navigateur. `server/hub.js` : file d’exécution sérialisée, comptes, registre, règles d’accès, idempotence, réservations et rapprochement des résultats. `hub-rooms.js` adapte les moteurs V1 au portefeuille et à la roulette. `poker.js`, `blackjack.js`, `roulette.js`, `minigames.js` sont les règles de jeu. `boost.js` choisit les mains de départ favorisées, uniquement au poker.
 
-`GET /api/events` utilise `Authorization: Bearer <token>` et reste ouvert. La réponse contient des paquets SSE `event: state` avec la vue individuelle du joueur. Une lecture `fetch` + `ReadableStream` permet l’en-tête d’autorisation, contrairement au constructeur EventSource standard. Un heartbeat et un watchdog facilitent les reconnexions.
+## Unité et comptabilité
 
-`POST /api/action` reçoit un type d’action, `actionId`, `handId`, `turnSeq` et, si nécessaire, un montant. La requête est authentifiée, validée et appliquée de façon synchrone, sans `await` au milieu d’une mutation du moteur. Le serveur renvoie une confirmation et diffuse des vues filtrées. Deux actions concurrentes sont donc traitées l’une après l’autre dans la boucle d’événements Node.
+Tous les montants : **centimes entiers sûrs**. Les calculs combinatoires de minis utilisent BigInt avant l’arrondi final au centime. Entrer à une table réserve un montant dans `escrows` et débite exactement autant le disponible. Le `balance` de cette réservation est le tapis de référence après la dernière main complètement réglée.
 
-`GET /api/state` resynchronise un joueur. `POST /api/leave` invalide son token. `GET /api/info` donne le port et des adresses réseau candidates, sans rendre le serveur publiquement accessible.
+Le moteur conserve les tapis courants et pots pendant une main. À `results`, `reconcile()` calcule les écarts de tapis et inscrit les résultats une seule fois par main, puis met à jour les réservations. À la sortie, seule la réservation réelle est rendue. Un siège quittant une main reste lié au compte jusqu’à la fin. Les robots n’ont pas de comptes persistants : leurs jetons représentent de la monnaie de jeu, pas une monnaie globalement à somme constante.
 
-## Machines à états
+Les mini-jeux atomiques débitent, tirent le résultat et créditent dans la même mutation durable. Cristaux réserve la mise une fois, sauvegarde les mines et cases ouvertes à chaque action puis crédite lors du cash-out ou de l’annulation autorisée. Son plateau caché reste exclusivement côté serveur.
 
-Poker : `lobby → preflop → flop → turn → river → results`. Une victoire sans opposition mène directement aux résultats. Lorsque personne ne peut plus miser, le tableau restant est complété et la main est évaluée. L’hôte relance une nouvelle main.
+Un identifiant d’action, son empreinte et sa réponse sont conservés. Deux appels identiques ne déclenchent pas un deuxième débit ; réutiliser l’identifiant avec une autre action est rejeté. Les IDs de main et séquence du tour empêchent les actions de table périmées. L’interface réessaie au plus une fois une requête perdue, avec le même identifiant.
 
-Blackjack : `lobby → betting → playing → results`. Un blackjack naturel du croupier mène directement aux résultats ; une phase de mises sans aucun pari retourne au salon. La distribution et le jeu du croupier sont des transitions serveur atomiques, pas des états publics séparés.
+## Stockage et déploiement
 
-## Invariants du moteur
+`server/storage.js` expose `SnapshotStore` :
 
-1. Une carte physique possède un identifiant unique. Le paquet de poker contient 52 cartes ; le sabot de blackjack, 312. Les doublons de rang/enseigne entre paquets de blackjack ont des identifiants différents.
-2. Le total des jetons d’une main de poker est conservé : tapis initiaux = jetons finaux. Les recharges et les arrivées se produisent hors participation à la main en cours.
-3. Une relance est un **montant total de la rue**, pas une somme à ajouter. `streetBet` et `totalBet` ont des rôles distincts.
-4. Les niveaux de contribution produisent les pots secondaires. Chaque niveau est attribué séparément aux joueurs éligibles. Un niveau payé par un seul joueur est rendu comme mise non suivie.
-5. Le blackjack débite la mise une fois à la validation. Un double débite une mise supplémentaire. Le règlement final utilise un paiement total, mise comprise, et ne peut être appliqué deux fois.
-6. Une vue client n’est jamais une copie intégrale du salon. `RoomManager.view()` énumère les champs autorisés, remplace les cartes cachées par `null`, et ne transmet pas les secrets, le paquet, ni un total de croupier caché.
-7. Les robots n’emploient pas les cartes des autres participants dans leur décision. Les fonctions de mélange et les règles ne cherchent pas à équilibrer artificiellement le nombre de victoires.
+- SQLite natif (`node:sqlite`) sur fichier local durable, WAL et `synchronous=FULL`.
+- Adaptateur distant à l’API libSQL/Turso `/v2/pipeline`, JSON typé, autorisation serveur HTTPS. Aucun token côté client.
 
-## Choix et simplifications
+Une table `cr_snapshot` contient une seule ligne avec `revision`, `owner`, `payload`. L’écriture remplace atomiquement le snapshot JSON via `UPDATE … WHERE owner=? AND revision=? RETURNING revision`. Une nouvelle instance prend possession du stockage et invalide l’ancienne. Ce mécanisme est un garde-fou lors d’un remplacement, **pas un mécanisme multi-réplicas**.
 
-Pas de stockage durable, pas de file distribuée, pas de comptes ni d’administration publique. Les confirmations des 256 dernières actions par joueur sont gardées en mémoire ; une requête ancienne hors de cette fenêtre est toujours soumise aux validations de main et de tour, mais le système n’est pas une journalisation transactionnelle persistante.
+Le serveur sérialise lectures et mutations ; une réponse portant sur un solde modifié n’est publiée qu’après confirmation du stockage. Une réponse HTTP perdue après COMMIT est réconciliée en relisant l’ID de commit. En cas d’ambiguïté persistante, les mises s’arrêtent (échec fermé), pas de débit répété au hasard. En cas d’erreur confirmée, l’état local sauvegardé avant la mutation est restauré.
 
-Les cartes sont créées en CSS et les nouveaux éléments sont animés brièvement. L’application n’intègre ni modèle 3D, ni dépendance graphique, ni moteur lourd. Le relief est un effet CSS. La feuille de style prévoit un mode de mouvement réduit.
+Les tables en direct restent en mémoire. Au redémarrage, les réservations persistées sont libérées : une main interrompue est annulée, la dernière main entièrement réglée reste prise en compte. Une fermeture administrative d’une table annule de la même manière une main non réglée et inscrit le motif. Les explorations Cristaux sont restaurées, pas les salons.
 
-La source fait foi pour les détails. Toute extension de règles doit ajouter ses cas de test avant d’être exposée dans l’interface, notamment la séparation au blackjack, les tournois ou un classement persistant.
+**Staging et production doivent avoir des bases séparées** : démarrer un test sur la base live en prendrait possession et fermerait les écritures du serveur live. Un seul processus, pas de PM2 cluster, worker multiplié ou deuxième service actif sur cette même base. Arrêt SIGTERM/SIGINT : arrêter les connexions, fermer/restituer les tables si encore propriétaire, fermer le stockage.
+
+## Authentification et administration
+
+Mots de passe scrypt N=32768, r=8, p=1, sel aléatoire, clé 64 octets ; comparaison constante. Les cookies sont HttpOnly/SameSite=Strict et Secure en production HTTPS. Les tokens bruts ne sont conservés que dans les cookies ; la base stocke leurs empreintes SHA-256. Sessions de 7 jours, au plus 5 par compte. Profil/administration protégés côté serveur, pas uniquement par le menu.
+
+Le bootstrap propriétaire exige `ADMIN_USER` et `ADMIN_PASSWORD_HASH`. Aucun « premier visiteur admin ». Collision avec un compte joueur : refus. Changement de mot de passe ou reset : sessions révoquées. Le reset d’un joueur impose de changer le mot de passe avant de jouer. On ne peut pas s’autopromouvoir depuis un payload client.
+
+Chaque ajustement administratif demande un motif. Ajouter/retirer/fixer modifie uniquement le disponible, pas un tapis actif. Suspension, réinitialisation, fermeture de table, annulation Cristaux et paramètres sont audités. Export : comptes publics, registre, audit — sans hashes, tokens ni plateau de mines caché. Il reste un document personnel à conserver en privé.
+
+Origines : `PUBLIC_BASE_URL` explicite en production, aucun `X-Forwarded-Host` arbitraire utilisé pour créer un lien. `TRUST_PROXY_HOPS` vaut zéro en local et doit être vérifié devant le proxy. Quotas par compte et quotas IP distincts, afin de ne pas traiter tous les élèves derrière le même routeur comme une seule session. Le site n’expose pas les adresses LAN du serveur en production.
+
+## Interface
+
+`cards-ui.js` conserve les éléments par room/main/siège/index et anime leurs deux faces via rotateY/backface-visibility. `effects.js` gère résultats centraux, comptage progressif, son optionnel et mouvement réduit ; le changement de page retire le résultat de l’ancien jeu. `art.js` dessine la roue de 37 secteurs, les gemmes et Plinko en SVG, sans assets externes. `app.js` compose les pages et les événements ; l’apparence n’est jamais la source d’un résultat financier.
+
+## Limites et coûts à surveiller
+
+Maximum 500 comptes dans le code, un snapshot limité à 32 Mio, listes de sessions/actions/registre dans ce snapshot. Le registre et les clés d’idempotence s’accumulent volontairement ; aucun effacement comptable automatique. Les écritures réécrivent le snapshot entier ; charge, temps de hachage, trafic distant et quotas hébergeur augmentent avec son volume. L’interface ne fournit pas encore un outil d’archivage/restauration tout-en-un.
+
+Avant un usage soutenu, prévoir des sauvegardes privées cohérentes, suivre la taille et les quotas, et remplacer le stockage par un schéma relationnel transactionnel à lignes séparées si nécessaire. Le code ne promet ni 500 utilisateurs simultanés, ni 24/7, ni coût nul permanent. Les chemins d’échec du stockage ont été testés localement, le service distant doit être testé en situation réelle.

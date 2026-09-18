@@ -1,13 +1,21 @@
-# Références consultées
+# Sources et périmètre
 
-Ces références expliquent les règles de base et les primitives techniques. Le projet n’est ni affilié à ces organismes ni certifié par eux. Les règles de table spécifiques et les limites de cette version sont précisées dans README.md et dans le tutoriel intégré.
+## Base du projet
 
-- **Bicycle — Texas Hold’em Poker** : cartes privées/communes, tours de mises, blindes et catégories de mains. https://bicyclecards.com/how-to-play/texas-holdem-poker
-- **Poker Tournament Directors Association — règles et addendum** : partage des pots, jetons impairs, duel, relances et réouverture après tapis courts. La version consultée est intitulée « 2026 Rules, Version 1.0. Sept 7, 2026 ». Le site est un jeu privé simplifié, pas l’application exhaustive d’un règlement de tournoi. https://www.pokertda.com/view-poker-tda-rules/
-- **Bicycle — Blackjack** : valeurs des cartes, jeu contre le croupier, tirer/rester/doubler, paiements. Les options de séparation et d’assurance décrites par la référence ne sont pas incluses dans cette première version. https://bicyclecards.com/how-to-play/blackjack
-- **Node.js — Crypto** : générateur d’entiers cryptographiques pour le mélange et les codes. https://nodejs.org/api/crypto.html
-- **Node.js — Test runner** : tests unitaires et tests réseau sans bibliothèque externe. https://nodejs.org/api/test.html
-- **MDN — Using server-sent events** : format des événements, heartbeats et limites des connexions HTTP. https://developer.mozilla.org/en-US/docs/Web/API/Server-sent_events/Using_server-sent_events
-- **MDN — Using the Fetch API** : requêtes, réponses et lecture de flux. https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API/Using_Fetch
+Cette V2 reprend l’archive fournie dans cette conversation `Club-Royal-Poker-Blackjack.zip`. Les empreintes des fichiers de départ sont dans `BASE-V1-SHA256.json`. Le journal d’Antigravity a fourni le contexte du service Render et les modifications de transport annoncées. Ce journal contenait un secret ; il n’est PAS inclus dans cette livraison.
 
-La version livrée utilise HTTP + SSE natifs et non Socket.IO, malgré sa présence dans le prompt préparatoire. Aucun visuel, marque de casino, police tierce ou code source de ces sites n’est repris. Les cartes, le logo et la table sont dessinés localement.
+Le code écrit ici, les graphismes CSS/SVG, les probabilités calculées dans les moteurs et les résultats de tests V2 sont des éléments de cette livraison, pas des assertions empruntées au compte rendu V1. Voir `VERIFICATIONS.md`.
+
+## Documentation technique primaire consultée
+
+- Node.js — module SQLite : https://nodejs.org/api/sqlite.html
+- Turso — SQL over HTTP, protocole et URL : https://docs.turso.tech/sdk/http/reference
+- Render — hébergement gratuit, stockage éphémère et mises en veille : https://render.com/docs/free
+- Render — disques persistants : https://render.com/docs/disks
+- Render — intégration GitHub : https://render.com/docs/github
+
+Ces pages décrivent des services et peuvent évoluer. Les vérifier à nouveau au déploiement. L’adaptateur distant ne remplace pas une vérification réelle avec la base du compte propriétaire.
+
+## Inspiration des mini-jeux
+
+Le choix des mécaniques Dice, mines et Plinko reprend des catégories courantes d’interfaces de casino mentionnées par l’utilisateur. Les règles visibles et les formules exactes de CETTE implémentation sont définies par `server/minigames.js`, testées dans `tests/casino-v2.test.js` et expliquées dans l’interface. Aucun code, logo, capture, son, modèle 3D ou asset de Stake, MyStake ou Evolution n’est redistribué. Aucun lien d’affiliation ni paiement.

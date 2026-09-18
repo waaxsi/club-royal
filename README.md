@@ -1,145 +1,133 @@
-# ♠ CLUB ROYAL
+# CLUB ROYAL · V2
 
-**Un site de poker Texas Hold’em, avec un mode blackjack, pour jouer avec sa classe ou s’entraîner contre des robots.** Interface française, table en relief CSS, salons privés et jetons entièrement fictifs.
+**Poker entre amis, blackjack, roulette et trois mini-jeux. Un compte, un portefeuille en euros fictifs.**
 
-## Démarrer sur le PC de l’école
+Cette version reprend les moteurs de cartes de CLUB ROYAL V1 et remplace l’interface et la gestion des comptes. Elle contient le code serveur, le site, les tests et les instructions de reprise. **Ce ZIP n’a pas été déployé sur le site public.**
 
-1. **Extrais tout le ZIP** dans un dossier, par exemple `Documents\club-royal`. Ne lance pas le projet directement à l’intérieur du ZIP.
-2. Le PC doit disposer de **Node.js 22 ou plus récent**. Dans un terminal : `node --version`. Si Node.js manque, demande son installation au responsable informatique. Le projet ne modifie pas les réglages de l’école.
-3. Double-clique sur **`LANCER.cmd`**. Garde cette fenêtre ouverte.
-4. Ouvre l’adresse locale indiquée, normalement `http://localhost:3000`.
-5. Choisis ton pseudo, sélectionne **Poker** ou **Blackjack**, puis joue en solo ou crée une table privée.
+## Ouvrir le projet
 
-**Aucun `npm install` n’est nécessaire.** Le projet n’a aucune dépendance externe. Après installation de Node.js, il fonctionne sans accès à Internet sur un réseau local autorisé. Les images de cartes sont dessinées en CSS, sans téléchargement de police ou d’images.
-
-### Depuis Visual Studio Code
-
-Ouvre le dossier `club-royal`, puis un terminal intégré à la racine du projet :
+Node.js **22.16.0 minimum**. Utiliser une révision maintenue et corrigée de Node compatible avec `node:sqlite`. Tests de cette livraison exécutés avec Node 22.16.0 sur Linux.
 
 ```sh
 node server/index.js
 ```
 
-Autres commandes disponibles :
+Ouvrir `http://localhost:3000`. Windows : `LANCER.cmd`. Ne pas désactiver les protections d’un PC scolaire. Le serveur affiche les adresses réseau candidates ; leur accessibilité dépend du réseau et n’a pas été testée sur les postes de l’école.
+
+**Aucune dépendance npm externe à installer.** HTML/CSS/JS natifs, HTTP Node, événements SSE. `npm run build` vérifie la syntaxe ; il ne génère pas de dossier `dist`.
 
 ```sh
-npm start          # lance le serveur
-npm run dev        # relance automatiquement le serveur quand le code change
-npm run build      # vérifie la syntaxe ; aucune compilation/bundle n’est nécessaire
-npm test           # exécute les tests intégrés à Node.js
+npm run build
+npm test
+npm run test:smoke
 ```
 
-Un redémarrage en mode développement efface les parties en cours. Sous PowerShell, la commande directe `node server/index.js` évite de dépendre du script npm.ps1 ; il n’est pas nécessaire de changer la stratégie d’exécution.
+Pour déployer la mise à jour existante : **[DEPLOIEMENT-GEMINI.md](DEPLOIEMENT-GEMINI.md)**. Le prompt prêt à envoyer se trouve dans `PROMPT-POUR-GEMINI.txt`.
 
-**Ne double-clique pas sur `public/index.html` et n’utilise pas uniquement Live Server.** Le véritable moteur multijoueur est le serveur Node.js ; le HTML seul ne suffit pas.
+## Ce qui est jouable
 
-## Jouer à plusieurs dans la classe
+| Jeu | Fonctionnement |
+|---|---|
+| **Poker Texas Hold’em** | 2 à 6 sièges, salons privés, lien/code, solo contre 1 à 5 robots, blindes, mises, relances, tapis, pots secondaires et partage. Classique ou « Mains favorisées ». |
+| **Blackjack** | Seul ou à plusieurs contre le même croupier automatique ; six jeux de cartes, As 1/11, S17, naturel 3:2, doubler. Pas de split, assurance, abandon ou mises annexes dans cette version. |
+| **Roulette européenne** | Un zéro, résultat partagé par les joueurs de la table ; solo, salons, numéros pleins, douzaines, rouge/noir, pair/impair, moitié basse/haute. |
+| **Cristaux** | 25 cases, 1/3/5 mines ; révéler, récupérer, ou annuler avant la première case. Plateau fixé côté serveur. |
+| **Dice** | Choisir 10 à 90 % de chances puis lancer ; résultat uniforme de 0,00 à 99,99. Le dé 3D est décoratif, pas un dé physique à six résultats. |
+| **Plinko** | Bille animée sur 12 rangées ; 12 choix binaires serveur, 13 cases d’arrivée et multiplicateurs affichés. |
 
-**Un seul PC doit héberger le serveur pour une même partie.** Les autres n’ont besoin que de leur navigateur.
+Les trois mini-jeux sont **solo** ; les comptes partagent le même portefeuille que les tables multijoueurs. Ils ne sont pas des salles de mini-jeux synchronisées.
 
-L’hôte lance le site, clique sur **Créer une table privée**, puis sur **Inviter des amis**. Un code de six caractères et un lien s’affichent. Les autres élèves ouvrent **l’adresse réseau du PC hôte**, puis entrent le code ou suivent le lien.
+### Règles et montants
 
-Exemple d’adresse, à remplacer par la vraie adresse du PC :
+Tous les montants du serveur sont des **centimes entiers**, jamais une somme autoritaire fournie par le navigateur. Les gains sont distingués du retour total, qui inclut la mise.
 
-```text
-http://192.168.1.25:3000
-```
+- Compte : 1 000 € fictifs de départ, une seule fois par création de compte. Pas de paiement, dépôt, retrait, transfert vers une devise réelle, récompense ou achat de jetons.
+- Tapis d’entrée : 200 € par défaut, prélevés sur le portefeuille disponible ; ce n’est pas un deuxième capital offert. Réglable à la création et complétable entre les mains.
+- Blackjack : mises de 5 à 200 €, multiples de 5. Le croupier reste sur tous les 17, même souples. Dépasser 21 fait perdre immédiatement. Un naturel bat un 21 de trois cartes ou plus. Doubler prélève une deuxième mise et donne une seule carte.
+- Roulette : mises en euros entiers, de 1 à 200 € au total par tour, au plus 25 positions distinctes. Un plein retourne 36 fois la mise, une douzaine 3 fois, une chance simple 2 fois. Zéro perd pour toutes les chances simples. Les colonnes sont prises en charge dans le moteur mais ne sont pas proposées sur le tapis visuel de cette version. Pas de cheval, carré ou panier.
+- Mini-jeux : 1 à 200 € par tour. Le coefficient mathématique de retour avant arrondi des centimes est 97 % pour Dice/Plinko et pour une stratégie de récupération à un nombre de cristaux fixé à l’avance. **Ce n’est pas une promesse de résultat sur une session.** Les probabilités, retours et limites sont affichés dans l’interface.
+- Crédit de secours : 1 000 € fictifs quand le total est inférieur à 5 €, au maximum une fois par 24 heures. Enregistré distinctement des gains.
 
-`localhost` désigne toujours **le PC sur lequel on le tape**. Il ne faut donc pas donner `localhost:3000` aux autres élèves. Le terminal et l’écran « Aide connexion » affichent les adresses réseau candidates. Avec plusieurs cartes réseau, une adresse de VPN ou de machine virtuelle peut être proposée : choisis celle du réseau de la classe.
+### Poker « Mains favorisées »
 
-Le bouton **Distribuer les cartes**, puis **Main suivante**, appartient à l’hôte. Il peut ajouter ou retirer des robots entre les mains. Une table de poker accueille **2 à 6 joueurs** au total, humains et robots compris. Le blackjack accepte **1 à 6 joueurs**, chacun contre le croupier automatique. Plusieurs salons indépendants peuvent coexister.
+L’option est visible à la création et demande un accord explicite avant de rejoindre. Elle choisit parmi **24 mélanges** celui qui améliore un score collectif des **mains de départ** (paire, cartes hautes, assorties, proches). Le score prend particulièrement en compte la main la plus faible de la table.
 
-### Un autre PC n’arrive pas à se connecter ?
+Cela favorise les départs intéressants en moyenne, **sans garantir une bonne main à chaque personne**. Le serveur ne consulte ni les soldes ni les identités pour choisir un gagnant ; il n’examine pas le futur tableau pour imposer le vainqueur. Il n’ajoute pas de cartes en double. Les robots suivent la même distribution. Le mode classique reste disponible. Le blackjack n’est pas modifié par cette option.
 
-Vérifie d’abord que le site fonctionne sur le PC hôte et que sa fenêtre serveur est ouverte. Vérifie ensuite l’adresse, le port et le réseau utilisé. Les réseaux scolaires peuvent isoler les appareils ou bloquer les connexions entrantes. Dans ce cas, demande une autorisation ou une aide au responsable informatique : le projet n’ouvre pas de port, ne change pas le pare-feu et ne contourne aucune restriction.
+## Interface et immersion
 
-Les navigateurs peuvent limiter le nombre de connexions HTTP simultanées vers un même hôte : pour tester une classe, privilégie différents appareils plutôt qu’une dizaine d’onglets d’un seul navigateur.
+Identité originale noir profond, lavande et menthe, tapis en relief, cartes à deux faces en CSS 3D, dos de cartes, jetons, dé 3D, roue et bille, cases Cristaux animées. Les éléments sont locaux, sans image ou police distante obligatoire.
 
-### Changer de port
+Les cartes se retournent progressivement (environ une seconde par défaut), avec un décalage entre cartes. Les mêmes nœuds sont conservés lors des mises à jour SSE : une actualisation de solde ne redistribue pas visuellement toute la table. Les montants des gains nets apparaissent **au centre de l’écran**, puis disparaissent. Pas de faux « gagné » sur une perte nette.
 
-Copie `.env.example` en `.env`, puis modifie :
+Mode animations cinématiques, rapides ou réduites ; prise en compte de la préférence système. Sons discrets désactivés par défaut. Tutoriel français court et règles de chaque jeu consultables. Ordinateur et mobile, sans moteur WebGL imposé.
+
+## Comptes et portefeuille
+
+Inscription avec identifiant, pseudo et mot de passe (10–128 caractères). Pas d’adresse e-mail. Utiliser un mot de passe différent des autres services. Sessions en cookies HttpOnly et mots de passe hachés scrypt. En production HTTPS : cookie Secure. Déconnexion conseillée sur les ordinateurs partagés.
+
+Le portefeuille distingue : **disponible**, **engagé**, opérations, mises, retours et ajustements. Le montant engagé est une valeur de référence comptable, pas un gain garanti. Dans une main de poker en cours, une mise peut être dans le pot ; elle n’est plus dans le tapis immédiatement affiché.
+
+On ne peut pas engager le même capital dans deux tables à la fois. En revanche, le disponible hors table peut servir aux mini-jeux. Quitter ou se déconnecter **ne supprime pas une perte** : le serveur termine la main selon les temporisations puis libère le tapis restant.
+
+L’historique visible présente les **50 dernières opérations**. L’API accepte un `offset` ; l’export administrateur contient le registre entier. Pas encore de pagination interactive de l’historique.
+
+### Persistance réelle : différence importante
+
+En local : SQLite dans `data/club-royal.sqlite`, dossier non public et exclu de Git. Garder ce fichier et ses sauvegardes. Une base ouverte exige des procédures de sauvegarde SQLite cohérentes ; ne pas copier seulement le fichier principal en oubliant le WAL en cours.
+
+Sur un hébergement à système de fichiers éphémère : configurer `TURSO_DATABASE_URL` et `TURSO_AUTH_TOKEN`, ou un **véritable** disque persistant avec `DATA_FILE` et `PERSISTENT_STORAGE=1`. Le serveur refuse une publication en mode production sans cette configuration et sans propriétaire. Mettre le drapeau à 1 ne transforme pas un disque éphémère en disque durable.
+
+Les comptes, sessions, opérations, explorations Cristaux et réservations de tapis sont persistants. Les **mains des tables ne sont pas sauvegardées pour reprise au milieu d’un tour** : au redémarrage, les mains interrompues sont annulées et les tapis du dernier état complètement réglé sont restitués. Les salons doivent être recréés. Une exploration Cristaux active se retrouve après reconnexion/redémarrage.
+
+La base distante est programmée via l’API HTTP documentée de libSQL/Turso. L’adaptateur a été testé contre un simulateur protocolaire utilisant un vrai SQLite local, **pas avec un compte Turso hébergé**. Cette validation reste obligatoire au déploiement.
+
+## Ton compte administrateur
+
+Le premier inscrit ne devient jamais administrateur. Aucun mot de passe public « admin/admin » n’existe.
+
+Avant la première publication, définir côté serveur :
 
 ```dotenv
-PORT=3001
+ADMIN_USER=waaxsi
+ADMIN_PASSWORD_HASH=<hash scrypt généré>
 ```
 
-Relance le serveur. Les invitations devront alors utiliser le nouveau port. Si un port est occupé, aucun autre programme n’est arrêté automatiquement.
+Commande interactive locale (saisie masquée, affiche uniquement le hash) :
 
-### Jouer depuis différents réseaux / sur Internet
-
-Ce ZIP ne déploie pas le site sur Internet. Il faut un hébergement capable d’exécuter le serveur Node.js en continu et de transmettre les réponses HTTP en streaming (SSE), sans mise en tampon du proxy. Un hébergement statique seul ne convient pas.
-
-Après avoir configuré un vrai domaine, un proxy HTTPS et l’hébergement, `PUBLIC_BASE_URL` peut préciser l’origine des liens d’invitation. Ce réglage **ne crée ni hébergement ni tunnel**. La version livrée vise d’abord une table privée sur un réseau de confiance, pas une plateforme publique de casino ou un service à grande échelle.
-
-## Les jeux implémentés
-
-### Poker Texas Hold’em — mode principal
-
-Deux cartes privées par joueur ; flop, turn et river ; meilleure combinaison de cinq cartes parmi les sept disponibles. Jeu sans limite, blindes fixes **10/20**, **2 000 jetons** au départ. Parole, suivre, se coucher, relance totale et tapis. Pots secondaires, partage des égalités, jetons impairs, sommes non suivies rendues, rotation du bouton et jeu en duel sont traités côté serveur.
-
-Les robots prennent leurs décisions à partir de **leurs propres cartes et du tableau public**. Ils ne voient ni les cartes adverses ni l’ordre du paquet. Ce sont des partenaires d’entraînement simples, pas un moteur de poker de niveau professionnel.
-
-Une relance doit respecter l’incrément minimum, sauf tapis insuffisant. Un tapis court ne rouvre pas nécessairement l’action ; plusieurs tapis courts peuvent la rouvrir cumulativement. La règle est expliquée dans les tests et dans le moteur. Il n’y a pas de prélèvement sur les pots.
-
-L’hôte distribue chaque nouvelle main. Ce n’est pas un tournoi multi-tables : pas de niveaux de blindes, d’élimination permanente, de déplacement de sièges entre tables ni de classement global. Les joueurs arrivant pendant une main attendent la suivante. Le bouton avance parmi les joueurs actifs ; il ne s’agit pas d’une simulation complète des procédures de tournoi avec bouton mort.
-
-### Blackjack — mode complémentaire
-
-**1 000 jetons**, mises de **10 à 200**, par pas de 10. Six paquets sont mélangés avant chaque main. Le croupier reçoit une carte cachée, son blackjack est vérifié dès la distribution et il reste sur tous les 17, y compris les 17 avec As souple.
-
-Tirer, rester et doubler sont disponibles. Le double est autorisé sur les deux cartes initiales avec suffisamment de jetons, donne exactement une carte supplémentaire et termine la main.
-
-Le gain ordinaire est de **1:1**, le blackjack naturel de **3:2**, une égalité rend la mise. Le montant « rendu » inclut la mise initiale. Exemple, avec 1 000 jetons et une mise de 100 : victoire normale → 1 100 ; blackjack gagnant → 1 150 ; égalité → 1 000 ; défaite → 900.
-
-La séparation de paires, l’assurance, l’abandon et les mises annexes ne sont **pas implémentés**. Cette limite apparaît dans les règles du site. Aucun résultat n’est ajusté pour forcer des victoires ou des défaites ; aucune affirmation de pourcentage d’avantage de la maison n’est faite.
-
-### Jetons et rythme de jeu
-
-Les jetons n’ont aucune valeur monétaire. Pas de compte, de paiement, de dépôt, de retrait, de publicité ou de lien affilié. À court de jetons, une recharge gratuite est disponible entre les mains. Les recharges sont comptées séparément côté serveur et ne sont pas des gains.
-
-Au poker, après 25 secondes sans action : parole si possible, sinon coucher. Au blackjack : 30 secondes pour miser, puis 25 secondes par tour ; à expiration, le joueur reste. Une connexion interrompue conserve la place environ 90 secondes. Le jeu ne s’arrête pas pour attendre une personne déconnectée. Si l’hôte se déconnecte, un autre humain connecté devient hôte.
-
-## Architecture et sécurité
-
-- **Client** : HTML, CSS et JavaScript natif, sans service externe ni police à télécharger.
-- **Serveur** : Node.js, HTTP natif, flux d’événements serveur **SSE** authentifiés, actions en JSON par `fetch`. Pas de Socket.IO, React ou WebGL dans la version livrée : ils ne sont pas nécessaires à ce périmètre.
-- **Autorité** : le serveur mélange, distribue, valide les tours, débite et attribue les jetons. Le navigateur ne peut pas imposer un solde ou un résultat.
-- **Aléatoire** : Fisher–Yates avec `node:crypto.randomInt` pour les cartes ; codes de salon aléatoires avec vérification de collision ; identifiants de session secrets à forte entropie.
-- **Confidentialité de jeu** : les cartes privées adverses, la carte cachée du croupier et le paquet restant ne sont pas transmis aux autres joueurs. Les cartes couchées restent cachées après la main.
-- **Actions fiables** : identifiants de requête pour éviter le double débit, numéro de main et séquence de tour pour rejeter les actions périmées, confirmation HTTP et nouvel état complet à la reconnexion.
-- **Précautions** : taille de requête plafonnée, limitation de débit, contrôle d’origine, rendu échappé des pseudos, pas d’accès HTTP aux fichiers serveur ni à `.env`.
-
-Le token de reconnexion reste dans `sessionStorage` et n’apparaît jamais dans les liens d’invitation. Une deuxième connexion utilisant le même token remplace la première ; pour deux joueurs, utiliser des sessions indépendantes. Si le navigateur bloque le stockage local, la partie courante reste possible mais la restauration après fermeture/actualisation peut ne pas fonctionner.
-
-**Les salons et les jetons sont en mémoire.** Fermer ou redémarrer le serveur les efface. Les salles abandonnées expirent ; les requêtes ne sont pas persistées sur disque. Le projet ne protège pas contre une personne qui contrôle le PC hôte, un participant qui partage volontairement sa session ou une interception sur un réseau HTTP non fiable. Avant tout usage public, une revue de sécurité, HTTPS, une politique d’accès, un déploiement adapté et des tests de charge supplémentaires sont nécessaires.
-
-## Où modifier le code ?
-
-```text
-club-royal/
-  LANCER.cmd                 Démarrage Windows
-  TESTER.cmd                 Vérifications Windows
-  public/index.html          Accueil et structure des écrans
-  public/styles.css          Couleurs, relief, cartes et responsive
-  public/app.js              Interface, tutoriels, actions et reconnexion
-  public/favicon.svg         Logo original
-  server/index.js            Serveur HTTP, fichiers, API et flux SSE
-  server/rooms.js            Salons, sessions, robots, délais et vues publiques
-  server/poker.js            Règles Texas Hold’em, pots et décisions des robots
-  server/blackjack.js        Règles blackjack et croupier
-  server/cards.js            Paquets, mélange, évaluation des mains
-  tests/                     Tests automatisés Node.js
-  scripts/check.mjs          Vérification syntaxique
-  docs/VERIFICATIONS.md      Résultats et limites des vérifications
-  docs/ARCHITECTURE.md       Flux de données et invariants
-  docs/SOURCES.md            Références techniques et règles consultées
-  docs/apercus/              Captures de l’interface
+```sh
+npm run admin:hash
 ```
 
-Le dossier complet est éditable dans Visual Studio Code. Tous les assets nécessaires au jeu sont locaux. Les captures de `docs/apercus` servent uniquement d’aperçus et ne sont pas chargées par le site.
+Pour que Gemini génère les identifiants sans les afficher :
 
-## Vérifications et limites
+```sh
+node scripts/admin-hash.mjs --generate --username waaxsi --out CHEMIN_ABSOLU_PRIVE_EXTERIEUR_AU_PROJET.json
+```
 
-Voir **`docs/VERIFICATIONS.md`** pour le détail : tests de logique, simulations, clients réseau indépendants et contrôles visuels. Ce n’est pas une garantie d’absence de bugs. Le lancement `.cmd` sous Windows, un vrai iPhone, le réseau de l’école et un déploiement public n’ont pas été vérifiés ici.
+Le dossier de destination doit déjà exister. Le générateur refuse un chemin dans le projet et refuse d’écraser un fichier existant. Il crée un fichier privé contenant identifiant, mot de passe aléatoire et hash. **Ne pas publier ce fichier, le coller dans un chat ou l’envoyer dans Git.** Sur Windows, vérifier aussi ses autorisations d’accès.
 
-Le mode responsive a été contrôlé en navigateur Chromium aux dimensions d’un ordinateur et d’un téléphone. Les tests ne remplacent pas une partie d’essai dans l’environnement de la classe.
+Au premier démarrage configuré, le propriétaire est créé dans la base. Les variables de bootstrap ne changent pas silencieusement son mot de passe s’il existe déjà. Un identifiant déjà pris par un joueur bloque le bootstrap plutôt que de promouvoir cet inconnu.
+
+L’espace administrateur permet de consulter tous les comptes, rechercher, ajouter/retirer/fixer le **disponible**, suspendre/réactiver un joueur, révoquer ses sessions, lui attribuer un mot de passe temporaire avec changement obligatoire, voir le registre, fermer une table, annuler une exploration Cristaux, publier un message et fermer les nouvelles parties/inscriptions pour maintenance. Les changements demandent un motif et sont audités. Les tapis engagés ne sont pas écrasés par un changement du disponible. Les cartes privées ne sont jamais affichées à l’administrateur.
+
+Pas de validation e-mail, CAPTCHA, authentification à deux facteurs ni récupération automatique d’un compte propriétaire perdu. Les corrections manuelles de la base demandent une sauvegarde et l’intervention du responsable technique.
+
+## Tests et limites honnêtes
+
+Voir `docs/VERIFICATIONS.md` et `docs/apercus-v2/rapport-ui.json`. Les tests livrés sont reproductibles. La V2 a été vérifiée localement ; **le réseau scolaire, Windows, le vrai domaine Render et une vraie base Turso ne l’ont pas été dans cette livraison**.
+
+L’architecture est volontairement celle d’un **petit serveur de classe mono-instance**, pas celle d’une plateforme commerciale : un snapshot JSON atomique dans la base, au plus 500 comptes, des registres conservés, un plafond de 32 Mio qui arrête les écritures plutôt que d’effacer les opérations. La capacité peut être atteinte avant 500 comptes suivant le volume de jeux. Il faut prévoir export/sauvegarde/archivage avec validation avant saturation ; aucune purge destructrice automatique n’est fournie. Plusieurs réplicas sont interdits. Les limites de l’hébergeur et de la base peuvent être plus basses.
+
+Les tests ne remplacent pas un audit de sécurité indépendant ni un test de charge. Aucune certification « casino », bancaire, légale ou de conformité à un hébergeur n’est revendiquée. Ce projet n’est pas conçu pour de l’argent réel.
+
+## Repères
+
+- `public/` : site et graphismes originaux, seul dossier servi.
+- `server/` : comptes, stockage, jeux et serveur HTTP/SSE.
+- `tests/` : suites de tests, sans accès à tes comptes hébergeur.
+- `scripts/` : lancement, hash propriétaire, smoke et tests visuels.
+- `docs/ARCHITECTURE.md` : architecture et règles de persistance.
+- `docs/BASE-V1-SHA256.json` : empreintes de la base V1 utilisée pour faciliter une fusion.
+- `docs/v1/` : rapports historiques V1, pas des preuves de tests V2.
+- `CHANGELOG.md` : fichiers et modifications principales.

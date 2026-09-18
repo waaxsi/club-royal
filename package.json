@@ -1,17 +1,20 @@
 {
   "name": "club-royal",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "private": true,
-  "description": "Poker Texas Hold'em et blackjack multijoueur — jetons fictifs, réseau local, sans dépendance.",
+  "description": "CLUB ROYAL — six jeux, comptes persistants, euros fictifs et administration.",
   "type": "module",
   "engines": {
-    "node": ">=22.0.0"
+    "node": ">=22.16.0"
   },
   "scripts": {
     "start": "node server/index.js",
     "dev": "node --watch server/index.js",
     "build": "node scripts/check.mjs",
-    "test": "node --test"
+    "test": "node scripts/test.mjs",
+    "admin:hash": "node scripts/admin-hash.mjs",
+    "test:ui": "python scripts/test-ui.py",
+    "test:smoke": "node scripts/smoke.mjs"
   },
   "license": "MIT"
 }

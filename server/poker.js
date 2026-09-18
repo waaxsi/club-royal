@@ -1,5 +1,6 @@
 import { makeDeck, evaluate, compareRanks } from './cards.js';
 
+const money = (r,n) => r.currency ? (n/100).toLocaleString('fr-FR')+' €' : n;
 const live = r => r.players.filter(p => p.inHand && !p.folded);
 const able = r => live(r).filter(p => p.stack > 0);
 const ordered = ps => [...ps].sort((a, b) => a.seat - b.seat);
@@ -31,7 +32,7 @@ export function startPoker(r, deck = makeDeck()) {
   pay(sb, r.smallBlind); sb.lastAction = 'Petite blinde';
   pay(bb, r.bigBlind); bb.lastAction = 'Grosse blinde';
   r.pending = new Set(able(r).map(p => p.id));
-  note(r, `Main #${r.handId} · blindes ${r.smallBlind}/${r.bigBlind}`);
+  note(r, `Main #${r.handId} · blindes ${money(r,r.smallBlind)}/${money(r,r.bigBlind)}`);
   advancePoker(r, bb.seat);
 }
 
@@ -64,10 +65,10 @@ export function actPoker(r, p, type, amount) {
     p.lastAction = 'Parole';
   } else if (type === 'call') {
     if (!legal.owed) throw new Error('Aucune mise à suivre.');
-    const paid = pay(p, legal.owed); p.lastAction = p.allIn ? `Tapis · ${paid}` : `Suit · ${paid}`;
+    const paid = pay(p, legal.owed); p.lastAction = p.allIn ? `Tapis · ${money(r,paid)}` : `Suit · ${money(r,paid)}`;
   } else if (type === 'raise') {
     if (!legal.raise || !Number.isSafeInteger(amount) || amount <= r.currentBet || amount > legal.maxRaise) throw new Error('Relance invalide.');
-    if (amount < legal.minRaise && amount !== legal.maxRaise) throw new Error(`Relance minimum : ${legal.minRaise}.`);
+    if (amount < legal.minRaise && amount !== legal.maxRaise) throw new Error(`Relance minimum : ${money(r,legal.minRaise)}.`);
     const increase = amount - r.currentBet;
     pay(p, amount - p.streetBet);
     r.currentBet = amount;
@@ -77,7 +78,7 @@ export function actPoker(r, p, type, amount) {
     } else {
       for (const x of able(r)) if (x.id !== p.id && x.streetBet < r.currentBet) r.pending.add(x.id);
     }
-    p.lastAction = p.allIn ? `Tapis · ${amount}` : `Relance à ${amount}`;
+    p.lastAction = p.allIn ? `Tapis · ${money(r,amount)}` : `Relance à ${money(r,amount)}`;
   } else throw new Error('Action inconnue.');
   p.actedAtBet = r.currentBet;
   r.pending.delete(p.id);
@@ -148,7 +149,7 @@ export function settlePoker(r, showdown = true) {
   }
   r.results = participants.map(p => ({ id: p.id, name: p.name, payout: p.payout, net: p.payout - p.totalBet, label: p.result }));
   r.phase = 'results'; r.showdown = showdown; r.turn = null; r.deadline = 0;
-  note(r, r.results.filter(p => p.payout).map(p => `${p.name} reçoit ${p.payout}`).join(' · '));
+  note(r, r.results.filter(p => p.payout).map(p => `${p.name} reçoit ${money(r,p.payout)}`).join(' · '));
 }
 
 /** Deliberately modest practice bot. Only its own hand and the public board are used. */

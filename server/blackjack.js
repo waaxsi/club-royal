@@ -4,7 +4,7 @@ function take(r) { const c = r.deck.pop(); if (!c) throw new Error('Sabot épuis
 const participants = r => r.players.filter(p => p.inHand && p.bjBet > 0);
 
 export function startBlackjack(r) {
-  const available = r.players.filter(p => !p.leaving && (p.connected || p.bot) && p.stack >= 10);
+  const available = r.players.filter(p => !p.leaving && (p.connected || p.bot) && p.stack >= (r.betMin ?? 10));
   if (!available.length) throw new Error('Recharge tes jetons pour jouer.');
   r.handId++; r.phase = 'betting'; r.turn = null; r.dealerCards = []; r.results = []; r.deck = [];
   for (const p of r.players) Object.assign(p, {
@@ -16,9 +16,9 @@ export function startBlackjack(r) {
 
 export function placeBlackjackBet(r, p, amount) {
   if (r.phase !== 'betting' || !p.inHand || p.betReady) throw new Error('Cette mise est déjà fermée.');
-  if (!Number.isSafeInteger(amount) || amount < 0 || amount > 200 || amount % 10 !== 0 || (amount > 0 && amount < 10) || amount > p.stack) throw new Error('Mise : 10 à 200 jetons, par pas de 10, selon ton solde.');
+  if (!Number.isSafeInteger(amount) || amount < 0 || amount > (r.betMax ?? 200) || amount % (r.betStep ?? 10) !== 0 || (amount > 0 && amount < (r.betMin ?? 10)) || amount > p.stack) throw new Error(r.currency ? 'Mise : 5 à 200 € fictifs, par pas de 5, selon ton tapis.' : 'Mise : 10 à 200 jetons, par pas de 10, selon ton solde.');
   p.stack -= amount; p.bjBet = amount; p.totalBet = amount; p.betReady = true;
-  p.lastAction = amount ? `Mise · ${amount}` : 'Passe cette main';
+  p.lastAction = amount ? `Mise · ${r.currency ? (amount/100).toLocaleString('fr-FR')+' €' : amount}` : 'Passe cette main';
   if (r.players.filter(p => p.inHand).every(p => p.betReady)) dealBlackjack(r);
 }
 

@@ -1,27 +1,36 @@
-CLUB ROYAL — POKER & BLACKJACK
+CLUB ROYAL V2 — POKER, BLACKJACK, ROULETTE & ARCADE
+================================================
+Le code est fourni. Cette archive ne met PAS automatiquement ton site public à jour.
 
-1. Extrais tout le ZIP.
-2. Ouvre le dossier club-royal dans Visual Studio Code.
-3. Node.js 22 ou plus récent doit être installé sur le PC.
-4. Double-clique sur LANCER.cmd.
-   Ou, dans le terminal de VS Code : node server/index.js
-5. Ouvre http://localhost:3000 sur le PC qui héberge.
+POUR GEMINI / ANTIGRAVITY
+Ouvrir PROMPT-POUR-GEMINI.txt puis suivre DEPLOIEMENT-GEMINI.md.
+Il doit fusionner la mise à jour avec le projet existant, configurer la base durable
+et ton compte administrateur, puis publier et tester le lien public.
 
-Pour ta classe : un seul PC héberge le serveur.
-Les autres ouvrent son adresse réseau (affichée dans le terminal),
-puis rejoignent la table avec le code de six caractères.
-Ne leur donne pas une adresse localhost.
+POUR ESSAYER EN LOCAL
+1. Extraire le ZIP dans un nouveau dossier. Ne pas écraser une ancienne base.
+2. Installer Node.js 22.16.0 minimum avec les autorisations nécessaires.
+3. Double-cliquer sur LANCER.cmd ou exécuter : node server/index.js
+4. Ouvrir http://localhost:3000 et créer un compte joueur.
+5. Pour la classe sur le même réseau, partager l’adresse réseau affichée, pas localhost.
 
-Pas de npm install. Pas d'API payante. Aucun argent réel.
-Le serveur doit rester ouvert. Un redémarrage efface les parties.
+Aucune dépendance npm externe : pas de npm install nécessaire.
+Les comptes locaux sont sauvegardés dans data/club-royal.sqlite.
+Le premier inscrit n’est JAMAIS administrateur. Voir README.md pour le propriétaire.
 
-N'ouvre pas directement le fichier public/index.html : le moteur
-multijoueur a besoin du serveur Node.js.
+POUR UN SITE QUI RESTE ACCESSIBLE SANS TON PC
+Le serveur Node complet doit être hébergé. Render gratuit ne garde pas une base
+SQLite locale : la connexion à une base distante libSQL/Turso est déjà codée,
+mais Gemini doit créer/configurer la vraie base et vérifier les redémarrages.
+Aucune dépense ni carte bancaire sans ton accord.
 
-Si la connexion est bloquée par le réseau de l'école, demande
-l'autorisation au responsable informatique. Aucun contournement
-ou changement automatique du pare-feu n'est effectué.
+JEUX
+Poker : classique ou mode « Mains favorisées » annoncé à tous.
+Blackjack : règles normales, non favorisé.
+Roulette : même roue en salon privé, mises personnelles.
+Cristaux, Dice et Plinko : mini-jeux solo, même portefeuille.
 
-README.md : mode d'emploi complet.
-docs/VERIFICATIONS.md : tests effectués et limites.
-TESTER.cmd : relance les vérifications sous Windows.
+Les comptes commencent avec 1 000,00 € FICTIFS. Aucun argent réel.
+Les soldes se conservent avec la base ; une main de table interrompue par un
+redémarrage est annulée et son tapis de référence restitué. Pas de reprise exacte
+au milieu d’une main. Une exploration Cristaux active, elle, est sauvegardée.

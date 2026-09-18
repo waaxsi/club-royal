@@ -1,0 +1,36 @@
+{
+  "mode": "local-rendering-adapter + real HTTP/SSE",
+  "checks": [
+    "Three independent sessions: register two players and login owner",
+    "Two-player private Boost room: explicit consent, private cards and real slow flip",
+    "Full poker hand via buttons, cards retained across states, central result overlay",
+    "Blackjack bet, visible hand totals, dealer reveal and settlement",
+    "Roulette draft bets, server-locked spin and matching displayed final number",
+    "Cristaux: fixed hidden board, animated tile, server result and cashout",
+    "Dice threshold and actual result; Plinko twelve-step trajectory and final bucket",
+    "Unified wallet history and owner balance action, live change in player session, audit"
+  ],
+  "pageErrors": [],
+  "overflows": [],
+  "screenshots": [
+    "01-accueil-ordinateur.png",
+    "01-accueil-mobile.png",
+    "02-poker-ordinateur.png",
+    "02-poker-mobile.png",
+    "03-resultat-central.png",
+    "04-blackjack-ordinateur.png",
+    "04-blackjack-mobile.png",
+    "05-roulette-ordinateur.png",
+    "05-roulette-mobile.png",
+    "06-cristaux-ordinateur.png",
+    "06-cristaux-mobile.png",
+    "07-dice-ordinateur.png",
+    "07-dice-mobile.png",
+    "08-plinko-ordinateur.png",
+    "08-plinko-mobile.png",
+    "09-portefeuille-ordinateur.png",
+    "09-portefeuille-mobile.png",
+    "10-admin-ordinateur.png",
+    "10-admin-mobile.png"
+  ]
+}

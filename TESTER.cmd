@@ -1,8 +1,10 @@
 @echo off
-chcp 65001 >nul
+setlocal
 cd /d "%~dp0"
 node scripts/check.mjs
-if errorlevel 1 goto end
-node --test
-:end
+if errorlevel 1 goto finish
+node scripts/test.mjs
+if errorlevel 1 goto finish
+node scripts/smoke.mjs
+:finish
 pause

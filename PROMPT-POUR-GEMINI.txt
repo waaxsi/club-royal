@@ -1,0 +1,24 @@
+Reprends mon site EXISTANT CLUB ROYAL. ChatGPT a écrit une V2 complète ; je veux que tu l’intègres et la publies, pas que tu recommences le site.
+
+Le nouveau ZIP « Club-Royal-V2-Immersion-Admin.zip » est dans mes Téléchargements. Retrouve le plus récent ZIP correspondant, extrais-le dans un nouveau dossier et lis d’abord DEPLOIEMENT-GEMINI.md, README.md, CHANGELOG.md et docs/VERIFICATIONS.md. Le fichier docs/BASE-V1-SHA256.json aide à comparer la base avec tes modifications intermédiaires.
+
+Repères à vérifier sur le PC :
+- Projet : C:\Users\Admin\.gemini\antigravity\scratch\club-royal
+- Dépôt : waaxsi/club-royal
+- Site : https://club-royal-game.onrender.com
+
+La V2 contient : poker principal avec robots et mode « Mains favorisées » annoncé, blackjack inchangé, roulette multijoueur, Cristaux/Dice/Plinko solo, cartes qui se retournent doucement en 3D, résultats au centre, interface futuristique, comptes, portefeuille commun en EUROS FICTIFS et administration privée avec modifications de soldes auditées.
+
+Le code tourne sur Node natif + HTTP/SSE, sans npm install obligatoire. Il faut publier LE SERVEUR, pas seulement public/. Conserve les fichiers privés, la base, le .git et les correctifs utiles du dépôt actuel ; sauvegarde avant fusion. Lance npm run build, npm test et npm run test:smoke.
+
+PRENDS EN CHARGE LE RESTE : configure la vraie base persistante libSQL/Turso prévue par le code (ou un disque durable réellement autorisé), le propriétaire « waaxsi », le hash et les secrets serveur, puis déploie sur le service et le domaine EXISTANTS. Render gratuit ne conserve pas une base SQLite locale. Ne contourne jamais ce contrôle avec un faux drapeau de persistance. Une seule instance ; tests/staging dans une autre base.
+
+Ne mets aucun mot de passe admin par défaut. Utilise le générateur scripts/admin-hash.mjs, place les identifiants dans un fichier privé HORS du projet et ne les affiche pas dans les journaux. Vérifie aussi la révocation de l’ancien token Render signalé et le rétablissement du dépôt privé sans casser l’intégration GitHub de Render.
+
+Ne fais aucun achat, n’active aucune facturation, ne modifie pas les protections de l’école. Demande-moi seulement la connexion ou l’autorisation indispensable, puis poursuis toi-même.
+
+Vérifie le vrai domaine avec deux sessions indépendantes : poker, blackjack, roulette, les trois minis, invitation, SSE, portefeuille commun, confidentialité des cartes, rôle admin et conservation des comptes après un redémarrage annoncé. Les mains de table interrompues sont annulées et le tapis de référence restitué ; ne promets pas une reprise exacte du tour.
+
+À la fin, ouvre et donne le lien réellement testé, l’emplacement privé de mes identifiants admin, les tests effectués et les limites restantes. Je ne veux avoir qu’à ouvrir le site, me connecter et inviter mes camarades. N’affirme pas que c’est publié si une étape d’hébergement ou de stockage reste bloquée.
+
+Commence par retrouver le nouveau ZIP, inspecter le projet actuel et suivre DEPLOIEMENT-GEMINI.md.

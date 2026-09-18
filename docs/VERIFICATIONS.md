@@ -1,54 +1,70 @@
-# Vérifications — Club Royal 1.0
+# Vérifications V2 — 18 septembre 2026
 
-Vérification effectuée dans l’environnement de création sous **Linux, Node.js v22.16.0**, avec Chromium automatisé pour l’interface. Les résultats décrivent les vérifications réalisées, pas une certification de sécurité ni une garantie d’absence de défauts.
+## Résultat de cette livraison
 
-## Résultats automatisés
+**103 tests automatisés réussis, 0 échec, 0 ignoré.** La commande `npm test` exécute uniquement les suites `*.test.js` ; les modules utilitaires ne sont pas comptés comme des tests. Journal brut : `resultats-tests-v2.txt`.
 
-**69 tests Node.js réussis ; 0 échec, 0 ignoré.** Les tests sont inclus et relançables avec `npm test` ou `node --test`. `npm run build` vérifie la syntaxe des fichiers JavaScript ; il ne s’agit pas d’une compilation React/Vite.
+Environnement réel : Linux, Node.js 22.16.0, Chromium installé dans l’environnement de préparation. Aucun accès aux identifiants du propriétaire, au serveur Render ou à une vraie base Turso n’a été utilisé pour ces tests.
 
-### Moteur de cartes et poker
+| Vérification | Exécuté / résultat |
+|---|---|
+| `npm run build` | 32 fichiers JavaScript vérifiés, sans bundler ni installation de dépendances. |
+| `npm test` | 103 tests, tous réussis : moteurs V1 conservés et tests V2 supplémentaires. |
+| `npm run test:smoke` | Vrai serveur HTTP temporaire : page, santé, création de compte, tables des trois jeux, Dice/Plinko, Cristaux et historique. |
+| HTTP/SSE multijoueur | Deux vrais clients HTTP indépendants, cookies et jetons CSRF, main complète, données partagées et confidentialité des cartes. |
+| Roulette | Paiements de toutes les catégories codées sur les 37 numéros ; verrouillage pendant la rotation et résultat commun. |
+| Dice | 40 000 vérifications d’issues (10 000 issues pour chacune de quatre probabilités), seuil et paiement. |
+| Plinko | Les 4 096 chemins binaires des 12 rangées, nombre de chemins par case, paiement et espérance avant arrondi. |
+| Cristaux | Disposition fixe, secrets cachés, mines, récupération, annulation et calcul combinatoire des paiements. |
+| Poker favorisé | Choix réel parmi 24 distributions, uniquement sur les mains privées de départ ; intégrité du paquet. |
+| Comptabilité | Réservations, gains, tapis, changement de jeu, demandes répétées, pertes lors d’un départ, annulation, remboursement de reprise et état restauré après erreur. |
+| Stockage local | Vrai fichier SQLite, fermeture/réouverture, comptes/sessions/Cristaux et exclusion de l’ancienne instance. |
+| Adaptateur distant | API HTTP simulée sur un vrai SQLite local ; paramètres typés, CAS, réponse perdue après COMMIT et panne ambiguë. Pas le service Turso réel. |
+| Administration | Contrôle du rôle, crédit audité visible en SSE, suspension, reset de mot de passe et changement obligatoire, export sans secrets, maintenance. |
+| Bootstrap / production | Pas de premier inscrit admin, refus sans propriétaire/HTTPS/stockage déclaré durable, cookie Secure et données réseau masquées. Générateur privé testé sans mot de passe imprimé. |
 
-Paquet standard et sabot sans identifiants dupliqués ; catégories de mains et kickers ; As bas ; meilleure main sur le tableau ; cas de multiples As au blackjack. Tours en duel et à trois, option de la grosse blinde, rotation du bouton et transition vers un duel. Rejet des actions hors tour, relances trop petites et montants invalides. Victoires sans opposition, tapis courts, réouverture cumulative, runout automatique, absence de relance dans un pot secondaire vide, plusieurs pots, mise non suivie rendue et partage avec jeton impair.
+## Contrôles d’interface exécutés
 
-Un test exécute **600 mains de poker simulées** de 2 à 6 joueurs, avec tapis de départ variables, actions légales aléatoires, vérification de terminaison, absence de soldes négatifs et conservation des jetons. Le tirage des cartes reste aléatoire ; ces simulations ne couvrent pas toutes les parties possibles.
+Script reproductible : `scripts/test-ui.py`. Le rapport JSON et **19 captures** sont dans `docs/apercus-v2/`.
 
-### Blackjack
+Trois contextes de navigateur indépendants ont été utilisés : deux joueurs et un propriétaire de test. Les parcours portent sur l’accueil et l’authentification, une table de poker à deux joueurs avec consentement au mode favorisé, une main complète et son overlay central, le blackjack, la roulette, Cristaux avec récupération, Dice, Plinko, le registre du portefeuille et une modification administrative visible dans la session du joueur.
 
-Les quatre soldes d’exemple sont testés : victoire, blackjack, égalité, défaite. Double naturel, blackjack du croupier, arrêt sur soft 17, tirage sous 17, dépassements, double avec une seule carte, double interdit, rejet et idempotence des mises, aucun pari, carte et total du croupier absents des vues publiques.
+Les mêmes éléments de cartes restent présents après un changement d’état ; une matrice 3D intermédiaire pendant le retournement a été vérifiée. La taille réelle des cases Cristaux a été contrôlée. Les anciens overlays disparaissent lors d’un changement de jeu. La bille de roulette et Plinko affiche le résultat envoyé par le serveur.
 
-Un test exécute également **800 mains de blackjack simulées**, vérifie leur terminaison et les soldes possibles pour le scénario choisi.
+Formats contrôlés : **1440 × 1000** et **390 × 844**. Résultat : aucune erreur JavaScript de page relevée, aucun débordement horizontal dans les captures contrôlées. Les mises en page ont aussi été regardées visuellement ; cela n’est pas un audit complet d’accessibilité ni une mesure de performances sur tous les appareils.
 
-### Vrai serveur et réseau
+### Limite précise du test navigateur
 
-Les tests démarrent de vrais serveurs HTTP locaux sur des ports éphémères. Ils ouvrent **deux clients SSE indépendants** et jouent une main complète par requêtes HTTP, puis vérifient le même tableau et les mêmes résultats sur les deux connexions. Le filtre de cartes privées est vérifié sur les données réellement transmises.
+La politique du Chromium fourni interdisait la navigation par URL, même vers localhost. Elle n’a pas été modifiée. Les vrais fichiers HTML/CSS/JS ont été rendus dans une page locale de test ; un adaptateur explicite a relié les appels HTTP et **de vrais flux SSE** à un serveur Node loopback isolé. Les sessions et communications sont réelles, mais **les mécanismes natifs de navigation, cookies, origines, chargement des modules et HTTPS du navigateur ne sont pas validés par cet adaptateur**.
 
-Autres tests : isolation de salons, requête dupliquée sans double débit, authentification, permissions d’hôte, numéros de main/tour périmés, reconnexion avec siège/cartes/solde conservés, arrivée en cours de main, table pleine, code invalide, transfert d’hôte, expiration du tour et des mises, fermeture de session, expiration de la grâce, nettoyage des salons, requêtes non JSON et origine externe refusées. Les routes des fichiers internes et de `.env` ne sont pas servies.
+Les tests HTTP séparés ont bien vérifié les routes, en-têtes, cookies émis et protections serveur. Gemini doit lancer la version sans `--adapted` dans un navigateur normal, puis tester le domaine public.
 
-## Interface et captures
+## Ce qui n’a PAS été fait
 
-Interface contrôlée dans Chromium en **1366 × 1000** et **390 × 844**. Pas de débordement horizontal observé à ces deux dimensions. Les captures sont dans `docs/apercus/`.
+- Aucun déploiement de cette V2 sur Render ; le lien public existant n’a pas été testé avec ce nouveau code.
+- Aucune connexion à un vrai compte Turso ; ses identifiants, ses quotas et sa conservation après redémarrage doivent être vérifiés.
+- Pas de test Windows ou sur un vrai téléphone, ni de connexion entre PC de l’école.
+- Pas de modification de ton dépôt GitHub, de tes permissions ou de révocation effective du token précédemment signalé. Ces étapes sont dans le handoff Gemini.
+- Pas de test de charge de centaines d’utilisateurs, d’audit de sécurité indépendant, de certification ou de garantie d’absence de défaut.
 
-Parcours exécutés : accueil, saisie de pseudo, tutoriel, création d’un salon, entrée avec code depuis une deuxième session, ajout de robots, distribution et main de poker complète, reprise de session, sélection du blackjack, mise, décision « rester » et résultat, code invalide et invitation. Aucune exception JavaScript non gérée n’a été détectée pendant ce parcours.
+## Contrôle de l’archive extraite
 
-### Limite importante de ce contrôle navigateur
+Le ZIP a été extrait dans un nouveau dossier, les empreintes des fichiers vérifiées, puis `npm run build`, les **103 tests** et le smoke relancés avec succès, sans `npm install`. Le véritable point d’entrée `node server/index.js` a également été lancé depuis cette copie : page servie, inscription, mini-jeu, sauvegarde SQLite, arrêt SIGTERM, redémarrage et récupération du même solde et de la même session vérifiés. Ces opérations restent locales sous Linux, pas sur Windows/Render.
 
-Le Chromium fourni dans l’environnement de création bloque les navigations réseau locales par une politique d’administration. Cette politique n’a pas été modifiée. L’interface a donc été chargée dans une page de test et ses accès HTTP relayés vers le **vrai serveur local** par un adaptateur du banc d’essai. Pour le contrôle visuel, l’adaptateur transforme les changements d’état en messages attendus par le client ; il ne fait pas partie du produit livré.
+## Reproduction
 
-Le **transport SSE natif** a été testé séparément avec les clients Node.js décrits plus haut. Les captures montrent le rendu du code de l’application, avec des états de parties réellement calculés par son moteur ; ce ne sont pas des images générées d’un site inexistant. En revanche, ce contrôle ne constitue pas un test de bout en bout du transport navigateur natif dans le réseau de l’école.
+```sh
+npm run build
+npm test
+npm run test:smoke
+```
 
-Un défaut d’interface trouvé pendant le contrôle a été corrigé : les boutons de gestion des robots sont maintenant réactivés après réception d’une confirmation, sans dépendre d’un message réseau suivant. Le libellé du joueur actif a aussi été corrigé pour distinguer « à toi » et « à son tour ».
+Les tests ne réclament aucun secret réel et n’utilisent aucune base de production. Pour les tests visuels normaux, dans un environnement autorisé disposant de Python, Playwright, httpx et Chromium :
 
-## Non vérifié ici
+```sh
+python scripts/test-ui.py
+```
 
-- Exécution réelle de `LANCER.cmd` / `TESTER.cmd` sous Windows et installation de Node.js sur le PC de l’école.
-- Connexion entre deux appareils physiques sur le réseau de la classe, règles du pare-feu et isolation Wi-Fi.
-- Safari/iPhone réel, Firefox et tous les anciens navigateurs ; les dimensions mobiles ont été simulées sous Chromium.
-- Déploiement public, proxy HTTPS, charge élevée ou tests de résistance prolongés.
-- Copie dans le presse-papiers et plein écran sur tous les appareils, car les autorisations peuvent varier.
-- Audit de sécurité indépendant, prévention de collusion et fonctions de tournoi complet.
+Le mode de préparation utilisé ici était `python scripts/test-ui.py --adapted`. Ce mode est limité à un serveur loopback.
 
-Une courte partie avec deux appareils autorisés reste nécessaire avant une session de classe.
-
-## Archive finale
-
-Le ZIP a été contrôlé puis extrait dans un dossier vierge. Depuis cette copie, sans installation de dépendances, la vérification de syntaxe et les **69 tests** ont de nouveau réussi. Le serveur extrait a ensuite été démarré sur un autre port local ; sa route de santé, sa page et ses ressources publiques ont été récupérées avec succès. Ce contrôle a également été réalisé sous Linux, pas sur le PC Windows de l’école.
+Les logs historiques sous `docs/v1/` décrivent l’ancienne livraison. Ils ne sont pas additionnés aux tests V2 et ne prouvent pas le fonctionnement de la version publiée.

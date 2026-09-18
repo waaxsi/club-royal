@@ -1,24 +1,26 @@
 @echo off
-chcp 65001 >nul
+setlocal
 cd /d "%~dp0"
-title CLUB ROYAL - Serveur Poker et Blackjack
 where node >nul 2>nul
 if errorlevel 1 (
-  echo Node.js est absent. Installe Node.js 22 ou une version LTS plus recente avec autorisation de l'ecole.
-  echo Puis relance ce fichier. Le projet ne necessite aucun paquet npm.
-  pause
-  exit /b 1
+ echo Node.js manque. Demande son installation officielle si ce PC est gere par l'ecole.
+ echo Version minimale : 22.16.0. Aucun besoin de npm install pour ce projet.
+ pause
+ exit /b 1
 )
-node -e "if(Number(process.versions.node.split('.')[0])<22){console.error('Node.js 22 minimum requis.');process.exit(1)}"
+node -e "const [a,b]=process.versions.node.split('.').map(Number);process.exit(a>22||(a===22&&b>=16)?0:1)"
 if errorlevel 1 (
-  pause
-  exit /b 1
+ echo Node.js 22.16.0 minimum est requis. Mets Node a jour avec autorisation.
+ pause
+ exit /b 1
 )
 echo.
-echo Demarrage de CLUB ROYAL...
-echo Ouvre l'adresse locale affichee ci-dessous dans ton navigateur.
-echo Garde cette fenetre ouverte pendant la partie.
+echo CLUB ROYAL V2 - serveur local, euros fictifs uniquement.
+echo Ouvre http://localhost:3000 sauf si tu as configure un autre PORT.
+echo Les adresses effectives seront affichees ci-dessous. Garde cette fenetre ouverte.
+echo Aucun logiciel existant n'est ferme et aucun pare-feu n'est modifie.
 echo.
 node server/index.js
-if errorlevel 1 echo Le serveur n'a pas pu demarrer. Lis le message ci-dessus.
+echo.
+echo Le serveur s'est arrete. Lis l'erreur ci-dessus si le lancement a echoue.
 pause
