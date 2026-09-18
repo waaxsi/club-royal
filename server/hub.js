@@ -18,6 +18,15 @@ export class CasinoHub {
   }
   async init(){
     this.data=await this.store.open(emptyState());
+    const base=emptyState();
+    this.data={...base,...this.data,settings:{...base.settings,...(this.data.settings||{})}};
+    if(!this.data.escrows)this.data.escrows={};
+    if(!this.data.mines)this.data.mines={};
+    if(!this.data.requests)this.data.requests={};
+    if(!this.data.ledger)this.data.ledger=[];
+    if(!this.data.audit)this.data.audit=[];
+    if(!this.data.users)this.data.users={};
+    if(!this.data.sessions)this.data.sessions={};
     const {adminUser,adminPasswordHash}=this.options;
     await this.run(()=>{
       // A restart cancels unfinished TABLE hands. Baseline escrows are the most recent
