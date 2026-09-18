@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#0b1210">
+  <meta name="description" content="Votre table privée de poker Texas Hold’em et de blackjack. Avec vos amis ou des robots. Jetons fictifs uniquement.">
+  <title>Club Royal — Votre table privée</title>
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/styles.css">
+  <script type="module" src="/app.js"></script>
+</head>
+<body>
+  <div class="app-frame">
+    <header class="topbar">
+      <button class="brand" data-do="home" aria-label="Club Royal, accueil"><span class="brand-mark">♠</span><span>CLUB <strong>ROYAL</strong><small>VOTRE TABLE PRIVÉE</small></span></button>
+      <nav class="topnav" aria-label="Navigation principale"><button class="nav-link active" data-do="home">Le salon</button><button class="nav-link" data-do="help">Comment jouer</button></nav>
+      <div class="header-right"><span class="connection" id="connection"><i></i> Connexion…</span><button class="icon-button" data-do="sound" id="sound-toggle" title="Activer les sons" aria-label="Activer les sons">♪<span class="sound-off">/</span></button><button class="profile" data-do="profile" title="Modifier le pseudo pour une prochaine partie"><span id="profile-initial">J</span><b id="profile-name">Joueur</b></button></div>
+    </header>
+    <main id="main">
+      <section id="home" class="home">
+        <div class="home-kicker"><span class="tiny-line"></span> LES MEILLEURES PARTIES SE JOUENT ENSEMBLE <span class="edition">ÉDITION ENTRE AMIS</span></div>
+        <div class="hero-grid">
+          <div class="hero-copy">
+            <div class="eyebrow"><i></i> UNE PLACE T’ATTEND</div>
+            <h1>Ta classe.<br>Ta table.<br><em>Ton jeu.</em></h1>
+            <p class="hero-description">Un bon bluff. Une carte de plus. Et toute la classe autour de la table. Le poker et le blackjack, simplement.</p>
+            <div class="nickname-wrap"><label for="nickname">TON PSEUDO</label><div><span>♙</span><input id="nickname" maxlength="18" minlength="2" placeholder="Comment on t’appelle ?" autocomplete="nickname"><span class="nickname-limit">2–18</span></div></div>
+          </div>
+          <div class="hero-visual" aria-label="Aperçu décoratif d’une table de poker">
+            <div class="preview-tag"><span class="live-dot"></span> TEXAS HOLD’EM <small>APERÇU</small></div>
+            <div class="preview-halo"></div>
+            <div class="preview-table"><div class="preview-felt"><div class="felt-logo">♠<span>CLUB ROYAL</span><small>UNE TABLE. DE BONS MOMENTS.</small></div><div class="preview-board" id="preview-board"></div><div class="preview-chips"><i class="chip green">25</i><i class="chip gold">100</i><i class="chip dark">50</i></div></div></div>
+            <div class="floating-note"><span>♠</span><div>La prochaine main ?<small>Elle est pour toi.</small></div></div>
+            <div class="hero-hand" id="hero-hand"></div>
+            <div class="preview-caption"><span>2 CARTES EN MAIN.</span> TOUT RESTE À JOUER.</div>
+          </div>
+        </div>
+        <div class="choose-heading"><h2>Qu’est-ce qu’on joue ?</h2><span>Choisis ta table, on s’occupe des cartes.</span></div>
+        <div class="game-choices" role="group" aria-label="Choisir un jeu">
+          <button class="game-choice selected" data-do="select-game" data-game="poker" aria-pressed="true"><span class="choice-suit">♠</span><span class="choice-text"><span class="choice-overline">LE GRAND CLASSIQUE <b>PRINCIPAL</b></span><strong>Poker <em>Texas Hold’em</em></strong><small>Bluffe, relance et partage la table. 2 à 6 joueurs.</small></span><span class="choice-check">✓</span></button>
+          <button class="game-choice" data-do="select-game" data-game="blackjack" aria-pressed="false"><span class="choice-suit blackjack-icon">21</span><span class="choice-text"><span class="choice-overline">ENCORE UNE CARTE ?</span><strong>Blackjack</strong><small>Rapproche-toi de 21 et défie le croupier.</small></span><span class="choice-check">✓</span></button>
+        </div>
+        <div class="play-strip"><div class="solo-choice"><label for="bot-count">POUR S’ENTRAÎNER</label><select id="bot-count" aria-label="Nombre de robots au poker"><option value="1">1 robot · duel</option><option value="2">2 robots</option><option value="3" selected>3 robots</option><option value="5">5 robots · table pleine</option></select></div><button class="btn btn-gold" data-do="solo" id="solo-button">Jouer contre les robots <span>↗</span></button><span class="or-divider">ou</span><button class="btn btn-light" data-do="create">Créer une table privée <span>＋</span></button><button class="btn btn-outline" data-do="join">Rejoindre avec un code <span>→</span></button></div>
+        <div class="home-bottom"><div><span class="mini-symbol">◇</span><p><b>Un code et c’est parti.</b><small>Pas de compte. Pas d’adresse e-mail.</small></p></div><div><span class="mini-symbol">♧</span><p><b>Avec tes amis ou des robots.</b><small>Sur ordinateur, tablette ou téléphone.</small></p></div><div><span class="mini-symbol">◎</span><p><b>Le plaisir du jeu, rien d’autre.</b><small>Jetons fictifs. Aucune valeur monétaire.</small></p></div></div>
+      </section>
+      <section id="game" class="game" hidden>
+        <div class="game-heading"><div><div class="breadcrumb"><button data-do="home">Le salon</button><span>/</span><span>Votre table privée</span></div><h1 id="game-title">Texas Hold’em <span>NO LIMIT</span></h1></div><div class="game-heading-right"><span class="hand-number" id="hand-number">MAIN #0</span><button class="btn btn-small btn-outline" data-do="invite">Inviter des amis ↗</button><button class="icon-button" data-do="fullscreen" aria-label="Plein écran" title="Plein écran">⛶</button></div></div>
+        <div class="table-layout"><div class="table-main"><div class="arena" id="arena"></div><div class="action-dock" id="actions" aria-live="polite"></div><div class="table-footnote"><span>♠ CLUB ROYAL</span><span>Jetons fictifs — aucune valeur monétaire</span><button data-do="help">Règles de la table ↗</button></div></div><aside class="table-sidebar" id="sidebar"></aside></div>
+      </section>
+    </main>
+    <footer class="footer"><span>CLUB ROYAL <i>•</i> FAIT POUR JOUER ENSEMBLE</span><span>Pas d’argent réel. Juste une bonne partie.</span><button data-do="network">Aide connexion ↗</button></footer>
+  </div>
+  <dialog id="modal"><div id="modal-content"></div></dialog>
+  <div id="toasts" class="toasts" role="status" aria-live="polite"></div>
+  <noscript><p>Active JavaScript pour jouer. Le serveur doit être lancé avec Node.js.</p></noscript>
+</body>
+</html>

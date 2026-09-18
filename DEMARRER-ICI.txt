@@ -1,0 +1,27 @@
+CLUB ROYAL — POKER & BLACKJACK
+
+1. Extrais tout le ZIP.
+2. Ouvre le dossier club-royal dans Visual Studio Code.
+3. Node.js 22 ou plus récent doit être installé sur le PC.
+4. Double-clique sur LANCER.cmd.
+   Ou, dans le terminal de VS Code : node server/index.js
+5. Ouvre http://localhost:3000 sur le PC qui héberge.
+
+Pour ta classe : un seul PC héberge le serveur.
+Les autres ouvrent son adresse réseau (affichée dans le terminal),
+puis rejoignent la table avec le code de six caractères.
+Ne leur donne pas une adresse localhost.
+
+Pas de npm install. Pas d'API payante. Aucun argent réel.
+Le serveur doit rester ouvert. Un redémarrage efface les parties.
+
+N'ouvre pas directement le fichier public/index.html : le moteur
+multijoueur a besoin du serveur Node.js.
+
+Si la connexion est bloquée par le réseau de l'école, demande
+l'autorisation au responsable informatique. Aucun contournement
+ou changement automatique du pare-feu n'est effectué.
+
+README.md : mode d'emploi complet.
+docs/VERIFICATIONS.md : tests effectués et limites.
+TESTER.cmd : relance les vérifications sous Windows.

@@ -1,0 +1,428 @@
+
+> club-royal@1.0.0 test
+> node --test
+
+TAP version 13
+# Subtest: Victoire ordinaire : 1000 → 1100
+ok 1 - Victoire ordinaire : 1000 → 1100
+  ---
+  duration_ms: 4.055838
+  type: 'test'
+  ...
+# Subtest: Blackjack naturel : 1000 → 1150
+ok 2 - Blackjack naturel : 1000 → 1150
+  ---
+  duration_ms: 0.521062
+  type: 'test'
+  ...
+# Subtest: Égalité : 1000 → 1000
+ok 3 - Égalité : 1000 → 1000
+  ---
+  duration_ms: 0.238928
+  type: 'test'
+  ...
+# Subtest: Défaite : 1000 → 900
+ok 4 - Défaite : 1000 → 900
+  ---
+  duration_ms: 0.281773
+  type: 'test'
+  ...
+# Subtest: Deux blackjacks : égalité immédiate
+ok 5 - Deux blackjacks : égalité immédiate
+  ---
+  duration_ms: 0.211387
+  type: 'test'
+  ...
+# Subtest: Le blackjack du croupier termine la main avant une action
+ok 6 - Le blackjack du croupier termine la main avant une action
+  ---
+  duration_ms: 0.458077
+  type: 'test'
+  ...
+# Subtest: Le croupier reste sur soft 17
+ok 7 - Le croupier reste sur soft 17
+  ---
+  duration_ms: 0.275183
+  type: 'test'
+  ...
+# Subtest: Le croupier tire sous 17 puis s’arrête
+ok 8 - Le croupier tire sous 17 puis s’arrête
+  ---
+  duration_ms: 0.27325
+  type: 'test'
+  ...
+# Subtest: Croupier dépasse : joueur non dépassé gagne
+ok 9 - Croupier dépasse : joueur non dépassé gagne
+  ---
+  duration_ms: 0.647021
+  type: 'test'
+  ...
+# Subtest: Un joueur dépassé perd même face à un croupier dépassé
+ok 10 - Un joueur dépassé perd même face à un croupier dépassé
+  ---
+  duration_ms: 0.730497
+  type: 'test'
+  ...
+# Subtest: Double : une seule carte et mise doublée exactement une fois
+ok 11 - Double : une seule carte et mise doublée exactement une fois
+  ---
+  duration_ms: 0.363276
+  type: 'test'
+  ...
+# Subtest: Double interdit après avoir tiré ou sans fonds suffisants
+ok 12 - Double interdit après avoir tiré ou sans fonds suffisants
+  ---
+  duration_ms: 0.23971
+  type: 'test'
+  ...
+# Subtest: Mises validées, pas de solde négatif ni double débit
+ok 13 - Mises validées, pas de solde négatif ni double débit
+  ---
+  duration_ms: 0.525649
+  type: 'test'
+  ...
+# Subtest: Aucun pari : retour au salon, pas de boucle de mains vides
+ok 14 - Aucun pari : retour au salon, pas de boucle de mains vides
+  ---
+  duration_ms: 0.588613
+  type: 'test'
+  ...
+# Subtest: Vue publique : carte et total cachés du croupier absents
+ok 15 - Vue publique : carte et total cachés du croupier absents
+  ---
+  duration_ms: 1.23947
+  type: 'test'
+  ...
+# Subtest: 800 mains aléatoires : gains cohérents et aucun solde négatif
+ok 16 - 800 mains aléatoires : gains cohérents et aucun solde négatif
+  ---
+  duration_ms: 61.209895
+  type: 'test'
+  ...
+# Subtest: 52 cartes distinctes, aucun joker
+ok 17 - 52 cartes distinctes, aucun joker
+  ---
+  duration_ms: 1.274242
+  type: 'test'
+  ...
+# Subtest: Sabot : 312 identifiants physiques distincts
+ok 18 - Sabot : 312 identifiants physiques distincts
+  ---
+  duration_ms: 1.181894
+  type: 'test'
+  ...
+# Subtest: Évaluation : Quinte flush royale (As Ks Qs Js Ts 2h 3d)
+ok 19 - Évaluation : Quinte flush royale (As Ks Qs Js Ts 2h 3d)
+  ---
+  duration_ms: 0.697276
+  type: 'test'
+  ...
+# Subtest: Évaluation : Quinte flush (9h 8h 7h 6h 5h As Ad)
+ok 20 - Évaluation : Quinte flush (9h 8h 7h 6h 5h As Ad)
+  ---
+  duration_ms: 0.29334
+  type: 'test'
+  ...
+# Subtest: Évaluation : Carré (Ah Ad Ac As Kh 2s 3s)
+ok 21 - Évaluation : Carré (Ah Ad Ac As Kh 2s 3s)
+  ---
+  duration_ms: 0.164627
+  type: 'test'
+  ...
+# Subtest: Évaluation : Full (Ah Ad Ac Ks Kh Kd 2s)
+ok 22 - Évaluation : Full (Ah Ad Ac Ks Kh Kd 2s)
+  ---
+  duration_ms: 0.134171
+  type: 'test'
+  ...
+# Subtest: Évaluation : Couleur (Ah Jh 9h 7h 3h 2s Kd)
+ok 23 - Évaluation : Couleur (Ah Jh 9h 7h 3h 2s Kd)
+  ---
+  duration_ms: 0.184798
+  type: 'test'
+  ...
+# Subtest: Évaluation : Quinte (Ah 2d 3c 4s 5d Kh Ks)
+ok 24 - Évaluation : Quinte (Ah 2d 3c 4s 5d Kh Ks)
+  ---
+  duration_ms: 0.587632
+  type: 'test'
+  ...
+# Subtest: Évaluation : Brelan (Ah Ad Ac Ks Qh 2s 3s)
+ok 25 - Évaluation : Brelan (Ah Ad Ac Ks Qh 2s 3s)
+  ---
+  duration_ms: 0.29959
+  type: 'test'
+  ...
+# Subtest: Évaluation : Double paire (Ah Ad Ks Kd Qh Qs 3s)
+ok 26 - Évaluation : Double paire (Ah Ad Ks Kd Qh Qs 3s)
+  ---
+  duration_ms: 0.417066
+  type: 'test'
+  ...
+# Subtest: Évaluation : Paire (Kh Kd As Jh 9d 6s 2c)
+ok 27 - Évaluation : Paire (Kh Kd As Jh 9d 6s 2c)
+  ---
+  duration_ms: 0.188192
+  type: 'test'
+  ...
+# Subtest: Évaluation : Carte haute (Ah Kd 9s 7h 5d 3c 2s)
+ok 28 - Évaluation : Carte haute (Ah Kd 9s 7h 5d 3c 2s)
+  ---
+  duration_ms: 0.115914
+  type: 'test'
+  ...
+# Subtest: Départage par kickers
+ok 29 - Départage par kickers
+  ---
+  duration_ms: 0.13338
+  type: 'test'
+  ...
+# Subtest: Une quinte 6 haute bat la roue A–5
+ok 30 - Une quinte 6 haute bat la roue A–5
+  ---
+  duration_ms: 0.075984
+  type: 'test'
+  ...
+# Subtest: La meilleure main peut être les cinq cartes communes
+ok 31 - La meilleure main peut être les cinq cartes communes
+  ---
+  duration_ms: 0.27996
+  type: 'test'
+  ...
+# Subtest: Couleur départagée sur la cinquième carte
+ok 32 - Couleur départagée sur la cinquième carte
+  ---
+  duration_ms: 0.095393
+  type: 'test'
+  ...
+# Subtest: Plusieurs As au blackjack
+ok 33 - Plusieurs As au blackjack
+  ---
+  duration_ms: 0.721723
+  type: 'test'
+  ...
+# Subtest: Blackjack naturel et dépassement
+ok 34 - Blackjack naturel et dépassement
+  ---
+  duration_ms: 0.149845
+  type: 'test'
+  ...
+# Subtest: L’évaluateur refuse les tailles invalides
+ok 35 - L’évaluateur refuse les tailles invalides
+  ---
+  duration_ms: 0.211628
+  type: 'test'
+  ...
+# Subtest: HTTP : accueil, ressources locales et protections
+ok 36 - HTTP : accueil, ressources locales et protections
+  ---
+  duration_ms: 45.840486
+  type: 'test'
+  ...
+# Subtest: Deux clients SSE jouent réellement une main complète et voient le même tableau
+ok 37 - Deux clients SSE jouent réellement une main complète et voient le même tableau
+  ---
+  duration_ms: 93.688004
+  type: 'test'
+  ...
+# Subtest: Salons isolés : une autre table ne reçoit ni joueurs ni mises
+ok 38 - Salons isolés : une autre table ne reçoit ni joueurs ni mises
+  ---
+  duration_ms: 14.075777
+  type: 'test'
+  ...
+# Subtest: Requête dupliquée : une seule mise, même réponse
+ok 39 - Requête dupliquée : une seule mise, même réponse
+  ---
+  duration_ms: 16.778805
+  type: 'test'
+  ...
+# Subtest: Authentification, actions hors tour et ancienne main refusées
+ok 40 - Authentification, actions hors tour et ancienne main refusées
+  ---
+  duration_ms: 14.945272
+  type: 'test'
+  ...
+# Subtest: Reconnexion au même siège avec cartes et jetons conservés
+ok 41 - Reconnexion au même siège avec cartes et jetons conservés
+  ---
+  duration_ms: 67.541289
+  type: 'test'
+  ...
+# Subtest: Arrivée pendant une main : attente jusqu’à la suivante
+ok 42 - Arrivée pendant une main : attente jusqu’à la suivante
+  ---
+  duration_ms: 9.008952
+  type: 'test'
+  ...
+# Subtest: Table pleine et code invalide renvoient des erreurs lisibles
+ok 43 - Table pleine et code invalide renvoient des erreurs lisibles
+  ---
+  duration_ms: 10.703005
+  type: 'test'
+  ...
+# Subtest: Déconnexion de l’hôte : transfert et tour expiré sans bloquer
+ok 44 - Déconnexion de l’hôte : transfert et tour expiré sans bloquer
+  ---
+  duration_ms: 202.567789
+  type: 'test'
+  ...
+# Subtest: Blackjack multijoueur : délai des mises puis tour auto
+ok 45 - Blackjack multijoueur : délai des mises puis tour auto
+  ---
+  duration_ms: 333.317435
+  type: 'test'
+  ...
+# Subtest: Origine externe et requêtes non JSON refusées
+ok 46 - Origine externe et requêtes non JSON refusées
+  ---
+  duration_ms: 3.960065
+  type: 'test'
+  ...
+# Subtest: Quitter invalide la session, sans exposer d’informations privées
+ok 47 - Quitter invalide la session, sans exposer d’informations privées
+  ---
+  duration_ms: 3.47088
+  type: 'test'
+  ...
+# Subtest: Table solo réellement peuplée de robots, pas rejoignable par code
+ok 48 - Table solo réellement peuplée de robots, pas rejoignable par code
+  ---
+  duration_ms: 3.179132
+  type: 'test'
+  ...
+# Subtest: Duel : bouton = petite blinde, agit en premier préflop
+ok 49 - Duel : bouton = petite blinde, agit en premier préflop
+  ---
+  duration_ms: 3.829197
+  type: 'test'
+  ...
+# Subtest: À trois : grosse blinde garde son option
+ok 50 - À trois : grosse blinde garde son option
+  ---
+  duration_ms: 0.495063
+  type: 'test'
+  ...
+# Subtest: Coucher collectif : attribution unique et cartes cachées
+ok 51 - Coucher collectif : attribution unique et cartes cachées
+  ---
+  duration_ms: 1.064618
+  type: 'test'
+  ...
+# Subtest: Une main complète a cinq communes et conserve les jetons
+ok 52 - Une main complète a cinq communes et conserve les jetons
+  ---
+  duration_ms: 1.991399
+  type: 'test'
+  ...
+# Subtest: Rotation du bouton entre les mains
+ok 53 - Rotation du bouton entre les mains
+  ---
+  duration_ms: 0.802274
+  type: 'test'
+  ...
+# Subtest: Relance minimum et interdiction de parole face à une mise
+ok 54 - Relance minimum et interdiction de parole face à une mise
+  ---
+  duration_ms: 1.622926
+  type: 'test'
+  ...
+# Subtest: Action hors tour refusée sans débiter
+ok 55 - Action hors tour refusée sans débiter
+  ---
+  duration_ms: 0.353391
+  type: 'test'
+  ...
+# Subtest: Tapis court ne rouvre pas une relance déjà jouée
+ok 56 - Tapis court ne rouvre pas une relance déjà jouée
+  ---
+  duration_ms: 0.297406
+  type: 'test'
+  ...
+# Subtest: Plusieurs tapis courts peuvent rouvrir cumulativement
+ok 57 - Plusieurs tapis courts peuvent rouvrir cumulativement
+  ---
+  duration_ms: 0.505298
+  type: 'test'
+  ...
+# Subtest: Tous à tapis : aucune boucle de tours et runout complet
+ok 58 - Tous à tapis : aucune boucle de tours et runout complet
+  ---
+  duration_ms: 0.797888
+  type: 'test'
+  ...
+# Subtest: Pas de relance dans un pot secondaire vide
+ok 59 - Pas de relance dans un pot secondaire vide
+  ---
+  duration_ms: 0.507521
+  type: 'test'
+  ...
+# Subtest: Trois tapis inégaux : pot principal, secondaire et remboursement
+ok 60 - Trois tapis inégaux : pot principal, secondaire et remboursement
+  ---
+  duration_ms: 1.032139
+  type: 'test'
+  ...
+# Subtest: Égalité avec jeton impair : priorité à gauche du bouton
+ok 61 - Égalité avec jeton impair : priorité à gauche du bouton
+  ---
+  duration_ms: 0.55932
+  type: 'test'
+  ...
+# Subtest: Robots : comportement indépendant des cartes privées adverses
+ok 62 - Robots : comportement indépendant des cartes privées adverses
+  ---
+  duration_ms: 0.478468
+  type: 'test'
+  ...
+# Subtest: Simulation de 600 mains : conservation, terminaisons et pots
+ok 63 - Simulation de 600 mains : conservation, terminaisons et pots
+  ---
+  duration_ms: 227.455353
+  type: 'test'
+  ...
+# Subtest: Transition à deux joueurs : pas deux grosses blindes consécutives
+ok 64 - Transition à deux joueurs : pas deux grosses blindes consécutives
+  ---
+  duration_ms: 0.4863
+  type: 'test'
+  ...
+# Subtest: Recharge humaine gratuite : seulement à court de jetons et hors main
+ok 65 - Recharge humaine gratuite : seulement à court de jetons et hors main
+  ---
+  duration_ms: 4.338672
+  type: 'test'
+  ...
+# Subtest: Robots gérés par l’hôte uniquement entre les mains
+ok 66 - Robots gérés par l’hôte uniquement entre les mains
+  ---
+  duration_ms: 2.464169
+  type: 'test'
+  ...
+# Subtest: Identité avec pseudo malicieux ne modifie pas les rôles
+ok 67 - Identité avec pseudo malicieux ne modifie pas les rôles
+  ---
+  duration_ms: 0.339861
+  type: 'test'
+  ...
+# Subtest: Expiration après la grâce : jeton invalidé sans supprimer une mise en cours
+ok 68 - Expiration après la grâce : jeton invalidé sans supprimer une mise en cours
+  ---
+  duration_ms: 1.311238
+  type: 'test'
+  ...
+# Subtest: Salle vide expirée : nettoyage de la salle et des identifiants
+ok 69 - Salle vide expirée : nettoyage de la salle et des identifiants
+  ---
+  duration_ms: 0.460841
+  type: 'test'
+  ...
+1..69
+# tests 69
+# suites 0
+# pass 69
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 932.047467

@@ -1,0 +1,17 @@
+{
+  "name": "club-royal",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Poker Texas Hold'em et blackjack multijoueur — jetons fictifs, réseau local, sans dépendance.",
+  "type": "module",
+  "engines": {
+    "node": ">=22.0.0"
+  },
+  "scripts": {
+    "start": "node server/index.js",
+    "dev": "node --watch server/index.js",
+    "build": "node scripts/check.mjs",
+    "test": "node --test"
+  },
+  "license": "MIT"
+}
